@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // projects 컬렉션: 인증된 사용자만 읽기/쓰기
+    match /projects/{projectId} {
+      allow read:  if request.auth != null;
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasAll(['siteName', 'niche', 'templateType', 'seo', 'design', 'ads'])
+                    && request.resource.data.siteName is string
+                    && request.resource.data.siteName.size() > 0;
+      allow update: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.ownerId;
+    }
+
+    // deployments 컬렉션: Cloud Functions만 쓰기 (Admin SDK)
+    match /deployments/{deployId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Admin SDK only
+    }
+  }
+}
