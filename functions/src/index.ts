@@ -3,7 +3,7 @@
  * Firestore onCreate → Claude API → GitHub Commit → Vercel Deploy
  */
 
-import * as functions from "firebase-functions";
+import * as functions from "firebase-functions/v1";
 import * as admin from "firebase-admin";
 import Anthropic from "@anthropic-ai/sdk";
 import { Octokit } from "@octokit/rest";
@@ -67,7 +67,7 @@ export const onProjectCreated = functions
   .runWith({ timeoutSeconds: 540, memory: "1GB" })
   .firestore
   .document("projects/{projectId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const projectId = context.params.projectId;
     const input = snap.data() as ProjectInput;
     const ref = snap.ref;
