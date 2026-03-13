@@ -1,194 +1,29 @@
-# 🏭 HOMEPAGE FACTORY — GitHub Actions
-# 트리거: main 브랜치에 sites/** 파일이 커밋되면 자동으로 Vercel 배포
-
-name: 🚀 Factory Auto Deploy
+﻿name: "Factory Auto Deploy"
 
 on:
   push:
     branches: [main]
-    paths:
-      - "sites/**"          # Firebase Cloud Function이 커밋하는 경로
 
 jobs:
-  # ────────────────────────────────────────────
-  # JOB 1: 변경된 사이트 감지
-  # ────────────────────────────────────────────
-  detect-changes:
-    name: 🔍 Detect Changed Sites
+  deploy-functions:
+    name: Deploy Firebase Functions
     runs-on: ubuntu-latest
-    outputs:
-      sites: ${{ steps.detect.outputs.sites }}
-      has_changes: ${{ steps.detect.outputs.has_changes }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 2
+          node-version: "20"
 
-      - name: Detect changed site directories
-        id: detect
-        run: |
-          # 변경된 sites/* 디렉토리 목록 추출
-          CHANGED=$(git diff --name-only HEAD~1 HEAD | grep '^sites/' | cut -d'/' -f2 | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "sites=$CHANGED" >> $GITHUB_OUTPUT
-          if [ "$CHANGED" != "[]" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-          echo "🔍 Changed sites: $CHANGED"
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
 
-  # ────────────────────────────────────────────
-  # JOB 2: SEO 품질 검사
-  # ────────────────────────────────────────────
-  seo-check:
-    name: 🔍 SEO Quality Gate
-    runs-on: ubuntu-latest
-    needs: detect-changes
-    if: needs.detect-changes.outputs.has_changes == 'true'
-    strategy:
-      matrix:
-        site: ${{ fromJson(needs.detect-changes.outputs.sites) }}
-    steps:
-      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: cd functions && npm install
 
-      - name: Check SEO basics
-        run: |
-          SITE_DIR="sites/${{ matrix.site }}"
-          HTML_FILE="$SITE_DIR/index.html"
+      - name: Build TypeScript
+        run: cd functions && npm run build
 
-          echo "📋 Checking SEO for: ${{ matrix.site }}"
-          ERRORS=0
-
-          # Title 태그 확인
-          if ! grep -q "<title>" "$HTML_FILE"; then
-            echo "❌ Missing <title> tag"
-            ERRORS=$((ERRORS+1))
-          else
-            echo "✅ Title tag found"
-          fi
-
-          # Meta description 확인
-          if ! grep -q 'name="description"' "$HTML_FILE"; then
-            echo "❌ Missing meta description"
-            ERRORS=$((ERRORS+1))
-          else
-            echo "✅ Meta description found"
-          fi
-
-          # JSON-LD 확인
-          if ! grep -q 'application/ld+json' "$HTML_FILE"; then
-            echo "⚠️  Missing JSON-LD schema (warning only)"
-          else
-            echo "✅ JSON-LD schema found"
-          fi
-
-          # Canonical 확인
-          if ! grep -q 'rel="canonical"' "$HTML_FILE"; then
-            echo "⚠️  Missing canonical URL (warning only)"
-          else
-            echo "✅ Canonical URL found"
-          fi
-
-          # Open Graph 확인
-          if ! grep -q 'og:title' "$HTML_FILE"; then
-            echo "⚠️  Missing OG tags (warning only)"
-          else
-            echo "✅ Open Graph tags found"
-          fi
-
-          # H1 태그 개수 확인
-          H1_COUNT=$(grep -c "<h1" "$HTML_FILE" || true)
-          if [ "$H1_COUNT" -ne 1 ]; then
-            echo "⚠️  H1 count: $H1_COUNT (should be 1)"
-          else
-            echo "✅ Single H1 found"
-          fi
-
-          if [ $ERRORS -gt 0 ]; then
-            echo "❌ SEO check failed with $ERRORS critical errors"
-            exit 1
-          fi
-          echo "✅ SEO check passed!"
-
-  # ────────────────────────────────────────────
-  # JOB 3: Vercel 배포
-  # ────────────────────────────────────────────
-  deploy:
-    name: 🚀 Deploy to Vercel
-    runs-on: ubuntu-latest
-    needs: [detect-changes, seo-check]
-    if: needs.detect-changes.outputs.has_changes == 'true'
-    strategy:
-      matrix:
-        site: ${{ fromJson(needs.detect-changes.outputs.sites) }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
-      - name: Deploy ${{ matrix.site }}
-        id: deploy
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        run: |
-          cd "sites/${{ matrix.site }}"
-
-          # vercel.json이 없으면 기본값 생성
-          if [ ! -f vercel.json ]; then
-            echo '{"version":2,"builds":[{"src":"**/*","use":"@vercel/static"}]}' > vercel.json
-          fi
-
-          # 프로덕션 배포
-          DEPLOY_URL=$(vercel --prod --token=$VERCEL_TOKEN --yes 2>&1 | tail -n 1)
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          echo "🚀 Deployed: $DEPLOY_URL"
-
-      - name: Update Firebase deployment status
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: |
-          # Firebase Firestore 상태 업데이트
-          curl -X PATCH \
-            "https://firestore.googleapis.com/v1/projects/$FIREBASE_PROJECT/databases/(default)/documents/deployments/${{ matrix.site }}" \
-            -H "Authorization: Bearer $FIREBASE_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "fields": {
-                "status": {"stringValue": "live"},
-                "deployUrl": {"stringValue": "${{ steps.deploy.outputs.deploy_url }}"},
-                "deployedAt": {"timestampValue": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-              }
-            }'
-
-  # ────────────────────────────────────────────
-  # JOB 4: 배포 후 알림 (Slack or Email)
-  # ────────────────────────────────────────────
-  notify:
-    name: 📢 Notify
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: always()
-    steps:
-      - name: Send Slack notification
-        if: ${{ secrets.SLACK_WEBHOOK != '' }}
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        run: |
-          STATUS="${{ needs.deploy.result }}"
-          EMOJI=$([ "$STATUS" = "success" ] && echo "✅" || echo "❌")
-
-          curl -X POST "$SLACK_WEBHOOK" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"text\": \"$EMOJI Homepage Factory: $STATUS\",
-              \"blocks\": [{
-                \"type\": \"section\",
-                \"text\": {
-                  \"type\": \"mrkdwn\",
-                  \"text\": \"$EMOJI *Homepage Factory Deploy $STATUS*\n Commit: \`${{ github.sha }}\`\nBy: ${{ github.actor }}\"
-                }
-              }]
-            }"
+      - name: Deploy Firebase Functions
+        run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}" --project homepage-factory
