@@ -5,11 +5,9 @@ import { Octokit } from "@octokit/rest";
 
 admin.initializeApp();
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-export const onProjectCreated = functions.firestore
+export const onProjectCreated = functions
+  .runWith({ timeoutSeconds: 540, memory: "1GB" })
+  .firestore
   .document("projects/{projectId}")
   .onCreate(async (snap, context) => {
     const data = snap.data();
@@ -18,43 +16,48 @@ export const onProjectCreated = functions.firestore
     const templateType = data.templateType || "calculator";
     const primaryKeyword = data.seo?.primaryKeyword || niche;
 
-    console.log(`[Factory] Generating code for: ${siteName}`);
+    console.log(`[Factory] Generating: ${siteName}`);
+    await snap.ref.update({ status: "generating" });
 
     try {
+      const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
       const message = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 4000,
         messages: [{
           role: "user",
-          content: `Create a single HTML file for a ${templateType} website about ${niche}. 
-Site name: ${siteName}
-Primary keyword: ${primaryKeyword}
-Include: SEO meta tags, AdSense placeholder comments, responsive design, and actual calculator functionality.
-Return ONLY the HTML code, no explanation.`
+          content: `Create a complete single-file HTML ${templateType} website.
+Site: ${siteName}, Niche: ${niche}, Keyword: ${primaryKeyword}
+Include: SEO meta tags, JSON-LD schema, AdSense placeholder comments, responsive design.
+Return ONLY the HTML code.`
         }]
       });
 
-      const htmlContent = message.content[0].type === "text" ? message.content[0].text : "";
-      
-      const githubToken = process.env.GITHUB_TOKEN;
-      const octokit = new Octokit({ auth: githubToken });
-      
+      const html = message.content[0].type === "text" ? message.content[0].text : "";
       const fileName = siteName.toLowerCase().replace(/\s+/g, "-");
       const filePath = `sites/${fileName}/index.html`;
-      
+
+      const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+      let sha: string | undefined;
+      try {
+        const existing = await octokit.repos.getContent({ owner: "soolee-A", repo: "homepage-factory-", path: filePath });
+        sha = (existing.data as any).sha;
+      } catch {}
+
       await octokit.repos.createOrUpdateFileContents({
         owner: "soolee-A",
         repo: "homepage-factory-",
         path: filePath,
-        message: `[Factory] Generate ${siteName}`,
-        content: Buffer.from(htmlContent).toString("base64"),
+        message: `[Factory] ${siteName}`,
+        content: Buffer.from(html).toString("base64"),
+        sha,
       });
 
-      await snap.ref.update({ status: "deployed", deployedAt: new Date() });
+      await snap.ref.update({ status: "deployed", filePath, deployedAt: new Date() });
       console.log(`[Factory] ✅ Done: ${filePath}`);
 
-    } catch (error) {
-      console.error("[Factory] Error:", error);
-      await snap.ref.update({ status: "error" });
+    } catch (error: any) {
+      console.error("[Factory] Error:", error.message);
+      await snap.ref.update({ status: "error", error: error.message });
     }
   });
