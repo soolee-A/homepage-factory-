@@ -58,11 +58,16 @@ export function getAirportStatus(airport: Airport): AirportStatusResult {
 }
 
 export function useAirportStatus(airport: Airport): AirportStatusResult {
-  const [result, setResult] = useState<AirportStatusResult>(() =>
-    getAirportStatus(airport)
-  );
+  const [result, setResult] = useState<AirportStatusResult>({
+    status: airport.is24Hours ? "always-open" : "open",
+    label: "Calculating...",
+    currentKST: "--:--",
+  });
 
   useEffect(() => {
+    // Initial calculation on client side
+    setResult(getAirportStatus(airport));
+
     const interval = setInterval(() => {
       setResult(getAirportStatus(airport));
     }, 60000);
