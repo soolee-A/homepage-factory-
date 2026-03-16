@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Bienvenue en Corée" },
+  "hero": {
+    "badge": "Pas d'arnaques, que des faits · Mis à jour pour 2026",
+    "h1a": "Kit de survie",
+    "h1b": "à l'arrivée en Corée",
+    "desc": "Tout ce dont un étranger a besoin pour atterrir en Corée du Sud en 2026 — entrée à l'aéroport d'Incheon, K-ETA, options de transport et zéro arnaque."
+  },
+  "airport": {
+    "h2": "Tableau de bord de l'état des aéroports",
+    "desc": "État en direct basé sur KST. L'ICN fonctionne 24h/24 — GMP et PUS ont des couvre-feux nocturnes.",
+    "gettingToCity": "Rejoindre la ville",
+    "book": "Réserver",
+    "curfew": "Couvre-feu : 23h00 – 06h00",
+    "alwaysOpen": "Ouvert 24h/24",
+    "openNow": "Ouvert maintenant"
+  },
+  "docs": {
+    "h2": "Liste des documents d'entrée",
+    "desc": "3 documents essentiels à préparer avant de voler vers la Corée du Sud.",
+    "stepByStep": "Étape par étape",
+    "officialSite": "Site officiel",
+    "scamTitle": "⚠️ Attention : Ne payez pas plus de $10 pour le K-ETA",
+    "scamDesc": "Le tarif officiel du K-ETA est de ₩10 000 (~$7,50 USD). Les sites frauduleux facturent entre $50 et $100. Vérifiez toujours que l'URL est k-eta.go.kr (.go.kr = gouvernement coréen).",
+    "exemptTitle": "Exemption 2026 :",
+    "exemptDesc": "Les citoyens de 67 pays, dont les États-Unis, le Royaume-Uni et l'Australie, sont temporairement exemptés du K-ETA jusqu'au 31 décembre 2026."
+  },
+  "checklist": {
+    "h2": "Liste de contrôle avant le vol",
+    "items": [
+      "Demander le K-ETA sur le site officiel k-eta.go.kr (₩10 000 seulement)",
+      "Remplir la déclaration de santé Q-Code (Gratuit)",
+      "Soumettre la carte e-Arrival via HiKorea (Gratuit)",
+      "Vérifier les horaires de couvre-feu pour GMP / PUS",
+      "Télécharger l'application Kakao T pour les taxis",
+      "Obtenir une carte T-Money pour les transports (dépôt de ₩3 000)",
+      "Échanger des KRW ou configurer une carte Wise / Revolut",
+      "Sauvegarder les numéros d'urgence : 112 (Police) / 119 (Pompiers)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Informations vérifiées pour 2026. Consultez toujours les sources gouvernementales officielles avant de voyager."
+  }
+}

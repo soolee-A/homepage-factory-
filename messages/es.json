@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Bienvenido a Corea" },
+  "hero": {
+    "badge": "Sin estafas, solo hechos · Actualizado para 2026",
+    "h1a": "Kit de",
+    "h1b": "Llegada a Corea",
+    "desc": "Todo lo que un extranjero necesita para llegar a Corea del Sur en 2026 — entrada por el Aeropuerto de Incheon, K-ETA, opciones de transporte y cero trampas de estafa."
+  },
+  "airport": {
+    "h2": "Panel de Estado del Aeropuerto",
+    "desc": "Estado en vivo basado en KST. ICN opera las 24/7 — GMP y PUS tienen toque de queda nocturno.",
+    "gettingToCity": "Cómo llegar a la ciudad",
+    "book": "Reservar",
+    "curfew": "Toque de queda: 23:00 – 06:00",
+    "alwaysOpen": "Abierto 24h",
+    "openNow": "Abierto ahora"
+  },
+  "docs": {
+    "h2": "Lista de documentos de entrada",
+    "desc": "3 documentos esenciales que debes preparar antes de volar a Corea del Sur.",
+    "stepByStep": "Paso a paso",
+    "officialSite": "Sitio oficial",
+    "scamTitle": "⚠️ Advertencia: No pagues más de $10 por K-ETA",
+    "scamDesc": "La tarifa oficial de K-ETA es ₩10,000 (~$7.50 USD). Los sitios de estafa cobran entre $50 y $100. Confirma siempre que la URL sea k-eta.go.kr (.go.kr = gobierno coreano).",
+    "exemptTitle": "Exención 2026:",
+    "exemptDesc": "Los ciudadanos de 67 países, incluidos EE. UU., Reino Unido y Australia, están temporalmente exentos de K-ETA hasta el 31 de diciembre de 2026."
+  },
+  "checklist": {
+    "h2": "Lista de verificación previa al vuelo",
+    "items": [
+      "Solicitar K-ETA en el sitio oficial k-eta.go.kr (solo ₩10,000)",
+      "Completar la declaración de salud Q-Code (Gratis)",
+      "Enviar la tarjeta e-Arrival a través de HiKorea (Gratis)",
+      "Verificar los horarios de toque de queda del aeropuerto para GMP / PUS",
+      "Descargar la app Kakao T para taxis",
+      "Obtener una tarjeta T-Money para el transporte (depósito de ₩3,000)",
+      "Cambiar a KRW o configurar una tarjeta Wise / Revolut",
+      "Guardar los números de emergencia: 112 (Policía) / 119 (Bomberos)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Datos verificados para 2026. Siempre consulta las fuentes oficiales del gobierno antes de viajar."
+  }
+}

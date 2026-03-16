@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Velkommen til Korea" },
+  "hero": {
+    "badge": "Ingen svindel, kun fakta · Opdateret til 2026",
+    "h1a": "Ankomst til Korea:",
+    "h1b": "Overlevelsespakke",
+    "desc": "Alt hvad en udlænding har brug for at lande i Sydkorea i 2026 — indrejse via Incheon lufthavn, K-ETA, transportmuligheder og nul svindelfælder."
+  },
+  "airport": {
+    "h2": "Lufthavnsstatus-dashboard",
+    "desc": "Live-status baseret på KST. ICN er åben 24/7 — GMP og PUS har natlig udgangsforbud.",
+    "gettingToCity": "Kom til byen",
+    "book": "Book",
+    "curfew": "Udgangsforbud: 23:00 – 06:00",
+    "alwaysOpen": "Åben 24t",
+    "openNow": "Åben nu"
+  },
+  "docs": {
+    "h2": "Tjekliste for indrejsedokumenter",
+    "desc": "3 vigtige dokumenter at forberede inden flyvning til Sydkorea.",
+    "stepByStep": "Trin for trin",
+    "officialSite": "Officiel hjemmeside",
+    "scamTitle": "⚠️ Advarsel: Betal ikke mere end $10 for K-ETA",
+    "scamDesc": "Den officielle K-ETA-afgift er ₩10.000 (~$7,50 USD). Svindelsider opkræver $50–$100. Bekræft altid, at URL'en er k-eta.go.kr (.go.kr = koreansk regering).",
+    "exemptTitle": "Fritagelse 2026:",
+    "exemptDesc": "Statsborgere fra 67 lande, herunder USA, Storbritannien og Australien, er midlertidigt fritaget for K-ETA til og med den 31. december 2026."
+  },
+  "checklist": {
+    "h2": "Tjekliste før afrejse",
+    "items": [
+      "Ansøg om K-ETA på officielle k-eta.go.kr (kun ₩10.000)",
+      "Udfyld Q-Code sundhedserklæring (Gratis)",
+      "Indsend e-Arrival Card via HiKorea (Gratis)",
+      "Tjek lufthavnens udgangsforbudstider for GMP / PUS",
+      "Download Kakao T-appen til taxaer",
+      "Få et T-Money kort til offentlig transport (₩3.000 depositum)",
+      "Veksle til KRW eller opsæt Wise / Revolut kort",
+      "Gem nødnumre: 112 (Politi) / 119 (Brandvæsen)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Fakta verificeret for 2026. Tjek altid officielle statslige kilder inden rejse."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Selamat Datang ke Korea" },
+  "hero": {
+    "badge": "Tiada Penipuan, Hanya Fakta · Dikemas kini untuk 2026",
+    "h1a": "Kit Kelangsungan",
+    "h1b": "Ketibaan di Korea",
+    "desc": "Semua yang diperlukan oleh orang asing untuk tiba di Korea Selatan pada 2026 — kemasukan melalui Lapangan Terbang Incheon, K-ETA, pilihan pengangkutan dan tiada perangkap penipuan."
+  },
+  "airport": {
+    "h2": "Papan Pemuka Status Lapangan Terbang",
+    "desc": "Status langsung berasaskan KST. ICN beroperasi 24/7 — GMP & PUS mempunyai waktu larangan malam.",
+    "gettingToCity": "Cara ke Bandar",
+    "book": "Tempah",
+    "curfew": "Larangan Malam: 23:00 – 06:00",
+    "alwaysOpen": "Buka 24 Jam",
+    "openNow": "Buka Sekarang"
+  },
+  "docs": {
+    "h2": "Senarai Semak Dokumen Kemasukan",
+    "desc": "3 dokumen penting yang perlu disediakan sebelum terbang ke Korea Selatan.",
+    "stepByStep": "Langkah demi Langkah",
+    "officialSite": "Laman Web Rasmi",
+    "scamTitle": "⚠️ Amaran: Jangan bayar lebih daripada $10 untuk K-ETA",
+    "scamDesc": "Yuran rasmi K-ETA ialah ₩10,000 (~$7.50 USD). Laman web penipuan mengenakan caj $50–$100. Sentiasa sahkan URL adalah k-eta.go.kr (.go.kr = kerajaan Korea).",
+    "exemptTitle": "Pengecualian 2026:",
+    "exemptDesc": "Warganegara daripada 67 negara termasuk AS, UK dan Australia dikecualikan sementara daripada K-ETA sehingga 31 Disember 2026."
+  },
+  "checklist": {
+    "h2": "Senarai Semak Sebelum Terbang",
+    "items": [
+      "Mohon K-ETA di laman web rasmi k-eta.go.kr (₩10,000 sahaja)",
+      "Lengkapkan perisytiharan kesihatan Q-Code (Percuma)",
+      "Hantar e-Arrival Card melalui HiKorea (Percuma)",
+      "Semak waktu larangan malam lapangan terbang untuk GMP / PUS",
+      "Muat turun apl Kakao T untuk teksi",
+      "Dapatkan kad T-Money untuk transit (deposit ₩3,000)",
+      "Tukar kepada KRW atau sediakan kad Wise / Revolut",
+      "Simpan nombor kecemasan: 112 (Polis) / 119 (Bomba)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Fakta disahkan untuk 2026. Sentiasa semak sumber kerajaan rasmi sebelum melancong."
+  }
+}

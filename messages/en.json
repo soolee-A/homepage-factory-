@@ -1,0 +1,132 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Welcome To Korea" },
+  "hero": {
+    "badge": "No Scams, Just Facts · Updated for 2026",
+    "h1a": "Korea Arrival",
+    "h1b": "Survival Kit",
+    "desc": "Everything a foreigner needs to land in South Korea in 2026 — Incheon Airport entry, K-ETA, transport options, and zero scam traps."
+  },
+  "airport": {
+    "h2": "Airport Status Dashboard",
+    "desc": "Live KST-based status. ICN operates 24/7 — GMP & PUS have night curfews.",
+    "gettingToCity": "Getting to the City",
+    "book": "Book",
+    "first": "First",
+    "last": "Last",
+    "curfew": "Curfew: 23:00 – 06:00",
+    "curfewPrefix": "Curfew 23:00–06:00 KST · ",
+    "alwaysOpen": "24h Open",
+    "openNow": "Open Now"
+  },
+  "airports": {
+    "ICN": {
+      "name": "Incheon International Airport",
+      "city": "Seoul",
+      "terminal": "T1 / T2",
+      "fact2026": "T2 Phase 4 expansion complete — capacity now 100M passengers/year.",
+      "transport": [
+        { "name": "AREX Express", "duration": "43 min (T1) / 51 min (T2)", "tip": "Reserved seating · Free Wi-Fi · Direct to Seoul Station" },
+        { "name": "AREX All-Stop", "duration": "59 min (T1)", "tip": "Avoid rush hours (07:30–09:30 / 18:00–20:00)" },
+        { "name": "Airport Limousine Bus", "duration": "60~80 min", "tip": "Best if you have heavy luggage — stops in front of major hotels" },
+        { "name": "Climate Card Tourist Pass", "duration": "Unlimited rides", "tip": "New 2026 short-term tourist pass — covers all Seoul Metro + bus" }
+      ]
+    },
+    "GMP": {
+      "name": "Gimpo International Airport",
+      "city": "Seoul",
+      "terminal": "Domestic / International",
+      "curfewWarning": "Flights landing after 23:00 may be diverted to Incheon. Confirm your arrival time.",
+      "transport": [
+        { "name": "Seoul Metro Line 5 / 9", "duration": "30~45 min", "tip": "Line 9 Express to Yeouido in 18 min" },
+        { "name": "Airport Bus", "duration": "40~60 min" },
+        { "name": "Kakao T Taxi", "duration": "30~50 min", "tip": "Download Kakao T app before arrival" }
+      ]
+    },
+    "PUS": {
+      "name": "Gimhae International Airport",
+      "city": "Busan",
+      "terminal": "Domestic / International",
+      "curfewWarning": "Night curfew strictly enforced. Late arrivals will be turned away.",
+      "transport": [
+        { "name": "Busan-Gimhae Light Rail (BGL)", "duration": "30~40 min", "tip": "Connect to Sasang Station for KTX to Seoul" },
+        { "name": "Airport Limousine", "duration": "40~60 min" },
+        { "name": "General Taxi", "duration": "25~40 min" }
+      ]
+    }
+  },
+  "docs": {
+    "h2": "Entry Document Checklist",
+    "desc": "3 essential documents to prepare before flying to South Korea.",
+    "stepByStep": "Step-by-Step",
+    "officialSite": "Official Website",
+    "scamTitle": "⚠️ Warning: Don't pay more than $10 for K-ETA",
+    "scamDesc": "The official K-ETA fee is ₩10,000 (~$7.50 USD). Scam sites charge $50–$100. Always confirm the URL is k-eta.go.kr (.go.kr = Korean government).",
+    "exemptTitle": "2026 Exemption:",
+    "exemptDesc": "Citizens of 67 countries including the US, UK, and Australia are temporarily exempt from K-ETA until December 31, 2026."
+  },
+  "entryDocs": {
+    "k-eta": {
+      "name": "K-ETA (Korea Electronic Travel Authorization)",
+      "officialCost": "₩10,000 · Official Fee (~$7.50 USD)",
+      "scamWarning": "Don't pay more than $10 for K-ETA. Fake sites charge $50–$100. Only use k-eta.go.kr.",
+      "exemptionNote": "67 countries incl. US, UK & Australia exempt until Dec 31, 2026. Check eligibility first.",
+      "steps": [
+        "Visit official K-ETA site: k-eta.go.kr",
+        "Create an account with your email",
+        "Fill in passport & travel details",
+        "Upload a passport-style photo",
+        "Pay ₩10,000 via credit card",
+        "Receive approval within 72 hours"
+      ]
+    },
+    "q-code": {
+      "name": "Q-Code (Quarantine Pre-Registration)",
+      "officialCost": "FREE",
+      "scamWarning": "Q-Code is 100% FREE. Any site asking for payment is a scam. Register at qcode.kdca.go.kr.",
+      "exemptionNote": "Q-Code is 2× faster than paper forms at the customs counter.",
+      "steps": [
+        "Visit Q-Code official website",
+        "Enter your health declaration info",
+        "Submit within 24 hours before arrival",
+        "Save the QR code to your phone",
+        "Show QR code at customs"
+      ]
+    },
+    "e-arrival": {
+      "name": "e-Arrival Card",
+      "officialCost": "FREE",
+      "scamWarning": "e-Arrival Card is completely FREE. Submit within 72 hours before your flight.",
+      "steps": [
+        "Visit HiKorea official portal",
+        "Select 'e-Arrival Card' service",
+        "Enter flight and personal details",
+        "Complete the declaration form",
+        "Submit and save confirmation"
+      ]
+    }
+  },
+  "checklist": {
+    "h2": "Pre-Flight Checklist",
+    "items": [
+      "Apply K-ETA on official k-eta.go.kr (₩10,000 only)",
+      "Complete Q-Code health declaration (Free)",
+      "Submit e-Arrival Card via HiKorea (Free)",
+      "Check airport curfew times for GMP / PUS",
+      "Download Kakao T app for taxis",
+      "Get a T-Money card for transit (₩3,000 deposit)",
+      "Exchange KRW or set up Wise / Revolut card",
+      "Save emergency numbers: 112 (Police) / 119 (Fire)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Facts verified for 2026. Always check official government sources before travel."
+  },
+  "seo": {
+    "title": "Wtoko – Korea Arrival Guide 2026 | Incheon Airport, K-ETA, No Scams",
+    "description": "100% fact-based Korea arrival guide 2026. K-ETA official cost ₩10,000, Incheon Airport transport, curfew times, entry documents. No Scams, Just Facts.",
+    "ogTitle": "Wtoko – Korea Arrival Survival Kit 2026",
+    "ogDescription": "No Scams, Just Facts. Complete Korea entry guide — K-ETA, airports, transport for 2026.",
+    "keywords": "South Korea Travel Guide 2026, Incheon Airport Entry, K-ETA official site, Korea arrival checklist, Gimpo airport curfew"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Kore'ye Hoş Geldiniz" },
+  "hero": {
+    "badge": "Dolandırıcılık Yok, Sadece Gerçekler · 2026 için Güncellendi",
+    "h1a": "Kore'ye Varış",
+    "h1b": "Hayatta Kalma Kiti",
+    "desc": "Bir yabancının 2026'da Güney Kore'ye inmek için ihtiyaç duyduğu her şey — Incheon Havalimanı girişi, K-ETA, ulaşım seçenekleri ve sıfır dolandırıcılık tuzağı."
+  },
+  "airport": {
+    "h2": "Havalimanı Durum Paneli",
+    "desc": "KST tabanlı canlı durum. ICN 24/7 açık — GMP ve PUS'ta gece sokağa çıkma kısıtlaması var.",
+    "gettingToCity": "Şehre Nasıl Gidilir",
+    "book": "Rezervasyon Yap",
+    "curfew": "Sokağa Çıkma Kısıtlaması: 23:00 – 06:00",
+    "alwaysOpen": "24 Saat Açık",
+    "openNow": "Şu An Açık"
+  },
+  "docs": {
+    "h2": "Giriş Belgesi Kontrol Listesi",
+    "desc": "Güney Kore'ye uçmadan önce hazırlanması gereken 3 temel belge.",
+    "stepByStep": "Adım Adım",
+    "officialSite": "Resmi Web Sitesi",
+    "scamTitle": "⚠️ Uyarı: K-ETA için $10'dan fazla ödemeyin",
+    "scamDesc": "Resmi K-ETA ücreti ₩10.000 (~$7,50 USD)'dur. Dolandırıcı siteler $50–$100 arasında ücret alıyor. URL'nin k-eta.go.kr olduğunu her zaman doğrulayın (.go.kr = Kore hükümeti).",
+    "exemptTitle": "2026 Muafiyeti:",
+    "exemptDesc": "ABD, İngiltere ve Avustralya dahil 67 ülkenin vatandaşları 31 Aralık 2026'ya kadar K-ETA'dan geçici olarak muaf tutulmaktadır."
+  },
+  "checklist": {
+    "h2": "Uçuş Öncesi Kontrol Listesi",
+    "items": [
+      "Resmi k-eta.go.kr sitesinde K-ETA başvurusu yapın (yalnızca ₩10.000)",
+      "Q-Code sağlık beyanını doldurun (Ücretsiz)",
+      "HiKorea üzerinden e-Arrival Card gönderin (Ücretsiz)",
+      "GMP / PUS için havalimanı sokağa çıkma kısıtlaması saatlerini kontrol edin",
+      "Taksi için Kakao T uygulamasını indirin",
+      "Toplu taşıma için T-Money kartı alın (₩3.000 depozito)",
+      "KRW bozdurma veya Wise / Revolut kartı kurulumu yapın",
+      "Acil numaraları kaydedin: 112 (Polis) / 119 (İtfaiye)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "2026 için doğrulanmış bilgiler. Seyahat etmeden önce her zaman resmi hükümet kaynaklarını kontrol edin."
+  }
+}

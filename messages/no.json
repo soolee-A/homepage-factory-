@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Velkommen til Korea" },
+  "hero": {
+    "badge": "Ingen svindel, bare fakta · Oppdatert for 2026",
+    "h1a": "Ankomst til Korea:",
+    "h1b": "Overlevelsespakke",
+    "desc": "Alt en utlending trenger for å lande i Sør-Korea i 2026 — innreise via Incheon lufthavn, K-ETA, transportalternativer og null svindelfeller."
+  },
+  "airport": {
+    "h2": "Lufthavnstatus-dashboard",
+    "desc": "Direktestatus basert på KST. ICN er åpen 24/7 — GMP og PUS har nattlig portforbud.",
+    "gettingToCity": "Komme seg til byen",
+    "book": "Bestill",
+    "curfew": "Portforbud: 23:00 – 06:00",
+    "alwaysOpen": "Åpen 24t",
+    "openNow": "Åpen nå"
+  },
+  "docs": {
+    "h2": "Sjekkliste for innreisedokumenter",
+    "desc": "3 viktige dokumenter du må forberede deg på før du flyr til Sør-Korea.",
+    "stepByStep": "Steg for steg",
+    "officialSite": "Offisiell nettside",
+    "scamTitle": "⚠️ Advarsel: Ikke betal mer enn $10 for K-ETA",
+    "scamDesc": "Den offisielle K-ETA-avgiften er ₩10 000 (~$7,50 USD). Svindelsider tar $50–$100. Bekreft alltid at URL-en er k-eta.go.kr (.go.kr = koreansk regjering).",
+    "exemptTitle": "Fritak 2026:",
+    "exemptDesc": "Borgere i 67 land inkludert USA, Storbritannia og Australia er midlertidig fritatt fra K-ETA til og med 31. desember 2026."
+  },
+  "checklist": {
+    "h2": "Sjekkliste før avreise",
+    "items": [
+      "Søk om K-ETA på offisielle k-eta.go.kr (kun ₩10 000)",
+      "Fyll ut Q-Code helsedeklarasjon (Gratis)",
+      "Send inn e-Arrival Card via HiKorea (Gratis)",
+      "Sjekk portforbudstider for flyplassen GMP / PUS",
+      "Last ned Kakao T-appen for taxi",
+      "Skaff et T-Money kort for kollektivtrafikk (₩3 000 depositum)",
+      "Veksle til KRW eller sett opp Wise / Revolut kort",
+      "Lagre nødnumre: 112 (Politi) / 119 (Brannvesen)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Fakta verifisert for 2026. Sjekk alltid offisielle offentlige kilder før reise."
+  }
+}

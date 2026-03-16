@@ -1,0 +1,132 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "歡迎來到韓國" },
+  "hero": {
+    "badge": "無詐騙，只有事實 · 2026年更新",
+    "h1a": "韓國入境",
+    "h1b": "生存指南",
+    "desc": "2026年外國人入境韓國所需的全部資訊 — 仁川機場入境、K-ETA、交通方式、防詐騙。"
+  },
+  "airport": {
+    "h2": "機場狀態儀表板",
+    "desc": "基於KST的即時狀態。仁川機場24小時運營 — 金浦和金海有夜間宵禁。",
+    "gettingToCity": "前往市區",
+    "book": "預訂",
+    "first": "首班",
+    "last": "末班",
+    "curfew": "宵禁: 23:00 – 06:00",
+    "curfewPrefix": "宵禁 23:00–06:00 KST · ",
+    "alwaysOpen": "24小時開放",
+    "openNow": "目前開放"
+  },
+  "airports": {
+    "ICN": {
+      "name": "仁川國際機場",
+      "city": "首爾",
+      "terminal": "T1 / T2",
+      "fact2026": "T2第四期擴建完成 — 年旅客接待能力達1億人次。",
+      "transport": [
+        { "name": "AREX 直達列車", "duration": "43分鐘 (T1) / 51分鐘 (T2)", "tip": "對號入座 · 免費Wi-Fi · 直達首爾站" },
+        { "name": "AREX 普通列車", "duration": "59分鐘 (T1)", "tip": "避開尖峰時段 (07:30–09:30 / 18:00–20:00)" },
+        { "name": "機場大巴", "duration": "60~80分鐘", "tip": "行李多時最佳選擇 — 停靠主要飯店門口" },
+        { "name": "氣候卡旅遊通票", "duration": "無限次搭乘", "tip": "2026年新推出短期旅遊通票 — 涵蓋首爾所有捷運和公車" }
+      ]
+    },
+    "GMP": {
+      "name": "金浦國際機場",
+      "city": "首爾",
+      "terminal": "國內線 / 國際線",
+      "curfewWarning": "23:00後降落的航班可能被轉至仁川。請確認您的到達時間。",
+      "transport": [
+        { "name": "首爾捷運5號線 / 9號線", "duration": "30~45分鐘", "tip": "9號線快車18分鐘到汝矣島" },
+        { "name": "機場巴士", "duration": "40~60分鐘" },
+        { "name": "Kakao T 計程車", "duration": "30~50分鐘", "tip": "到達前下載Kakao T應用程式" }
+      ]
+    },
+    "PUS": {
+      "name": "金海國際機場",
+      "city": "釜山",
+      "terminal": "國內線 / 國際線",
+      "curfewWarning": "夜間宵禁嚴格執行。深夜到達將被拒絕入港。",
+      "transport": [
+        { "name": "釜山-金海輕軌 (BGL)", "duration": "30~40分鐘", "tip": "在沙上站換乘前往首爾的KTX" },
+        { "name": "機場大巴", "duration": "40~60分鐘" },
+        { "name": "一般計程車", "duration": "25~40分鐘" }
+      ]
+    }
+  },
+  "docs": {
+    "h2": "入境文件清單",
+    "desc": "前往韓國前需要準備的3份重要文件。",
+    "stepByStep": "步驟指南",
+    "officialSite": "官方網站",
+    "scamTitle": "⚠️ 警告：K-ETA不要支付超過$10",
+    "scamDesc": "K-ETA官方費用為₩10,000（約$7.50 USD）。詐騙網站收取$50至$100。請務必確認網址為k-eta.go.kr (.go.kr = 韓國政府)。",
+    "exemptTitle": "2026年豁免：",
+    "exemptDesc": "包括美國、英國、澳洲在內的67個國家公民在2026年12月31日前臨時豁免K-ETA。"
+  },
+  "entryDocs": {
+    "k-eta": {
+      "name": "K-ETA（韓國電子旅行授權）",
+      "officialCost": "₩10,000 · 官方費用（~$7.50 USD）",
+      "scamWarning": "K-ETA不要支付超過$10。假冒網站收取$50–$100。只使用k-eta.go.kr。",
+      "exemptionNote": "含美國、英國、澳洲在內的67個國家，免除至2026年12月31日。請先確認資格。",
+      "steps": [
+        "訪問K-ETA官方網站：k-eta.go.kr",
+        "用電子郵件註冊帳號",
+        "填寫護照及旅行資訊",
+        "上傳護照照片",
+        "用信用卡支付₩10,000",
+        "72小時內收到審批通知"
+      ]
+    },
+    "q-code": {
+      "name": "Q-Code（檢疫預登記）",
+      "officialCost": "免費",
+      "scamWarning": "Q-Code 100%免費。任何要求付款的網站都是詐騙。在qcode.kdca.go.kr登記。",
+      "exemptionNote": "Q-Code在海關櫃台比紙質表格快2倍。",
+      "steps": [
+        "訪問Q-Code官方網站",
+        "填寫健康申報資訊",
+        "在抵達前24小時內提交",
+        "將QR碼儲存到手機",
+        "在海關出示QR碼"
+      ]
+    },
+    "e-arrival": {
+      "name": "e-Arrival Card",
+      "officialCost": "免費",
+      "scamWarning": "e-Arrival Card完全免費。在航班出發72小時前提交。",
+      "steps": [
+        "訪問HiKorea官方入口網站",
+        "選擇「e-Arrival Card」服務",
+        "輸入航班和個人資訊",
+        "完成申報表",
+        "提交並儲存確認單"
+      ]
+    }
+  },
+  "checklist": {
+    "h2": "出發前清單",
+    "items": [
+      "在官方k-eta.go.kr申請K-ETA（僅₩10,000）",
+      "填寫Q-Code健康申報（免費）",
+      "透過HiKorea提交e-Arrival Card（免費）",
+      "確認金浦/金海的夜間宵禁時間",
+      "下載Kakao T叫車應用程式",
+      "購買T-Money交通卡（₩3,000押金）",
+      "兌換韓元或準備Wise / Revolut卡",
+      "儲存緊急號碼：112（警察）/ 119（消防）"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "2026年核實的事實。出行前請務必查閱官方政府網站。"
+  },
+  "seo": {
+    "title": "Wtoko – 韓國入境指南2026 | 仁川機場、K-ETA、防詐騙",
+    "description": "100%基於事實的2026年韓國入境指南。K-ETA官方費用₩10,000，仁川機場交通，宵禁時間，入境文件。無詐騙，只有事實。",
+    "ogTitle": "Wtoko – 2026年韓國入境生存指南",
+    "ogDescription": "無詐騙，只有事實。包含K-ETA、機場、2026年交通資訊的完整韓國入境指南。",
+    "keywords": "韓國旅遊指南2026, 仁川機場入境, K-ETA官方網站, 韓國入境清單, 金浦機場宵禁"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "nav": { "title": "Wtoko", "subtitle": "Chào mừng đến Hàn Quốc" },
+  "hero": {
+    "badge": "Không lừa đảo, chỉ có sự thật · Cập nhật cho năm 2026",
+    "h1a": "Bộ kit đến Hàn Quốc",
+    "h1b": "dành cho người mới",
+    "desc": "Tất cả những gì người nước ngoài cần để đến Hàn Quốc năm 2026 — nhập cảnh qua Sân bay Incheon, K-ETA, các lựa chọn di chuyển và tránh xa mọi bẫy lừa đảo."
+  },
+  "airport": {
+    "h2": "Bảng trạng thái sân bay",
+    "desc": "Trạng thái trực tiếp theo giờ KST. ICN hoạt động 24/7 — GMP và PUS có lệnh giới nghiêm ban đêm.",
+    "gettingToCity": "Di chuyển vào thành phố",
+    "book": "Đặt vé",
+    "curfew": "Giới nghiêm: 23:00 – 06:00",
+    "alwaysOpen": "Mở 24 giờ",
+    "openNow": "Đang mở cửa"
+  },
+  "docs": {
+    "h2": "Danh sách tài liệu nhập cảnh",
+    "desc": "3 tài liệu thiết yếu cần chuẩn bị trước khi bay đến Hàn Quốc.",
+    "stepByStep": "Từng bước thực hiện",
+    "officialSite": "Trang web chính thức",
+    "scamTitle": "⚠️ Cảnh báo: Đừng trả hơn $10 cho K-ETA",
+    "scamDesc": "Phí K-ETA chính thức là ₩10,000 (~$7.50 USD). Các trang web lừa đảo tính phí $50–$100. Luôn xác nhận URL là k-eta.go.kr (.go.kr = chính phủ Hàn Quốc).",
+    "exemptTitle": "Miễn trừ năm 2026:",
+    "exemptDesc": "Công dân của 67 quốc gia bao gồm Mỹ, Anh và Úc được tạm thời miễn K-ETA đến ngày 31 tháng 12 năm 2026."
+  },
+  "checklist": {
+    "h2": "Danh sách kiểm tra trước chuyến bay",
+    "items": [
+      "Đăng ký K-ETA tại trang web chính thức k-eta.go.kr (chỉ ₩10,000)",
+      "Hoàn thành khai báo sức khỏe Q-Code (Miễn phí)",
+      "Nộp thẻ e-Arrival qua HiKorea (Miễn phí)",
+      "Kiểm tra giờ giới nghiêm sân bay cho GMP / PUS",
+      "Tải app Kakao T để đặt taxi",
+      "Lấy thẻ T-Money để đi lại (đặt cọc ₩3,000)",
+      "Đổi sang KRW hoặc cài đặt thẻ Wise / Revolut",
+      "Lưu số khẩn cấp: 112 (Cảnh sát) / 119 (Cứu hỏa)"
+    ]
+  },
+  "footer": {
+    "name": "Wtoko — Welcome TO KOrea",
+    "desc": "Thông tin đã được xác minh cho năm 2026. Luôn kiểm tra các nguồn chính phủ chính thức trước khi du lịch."
+  }
+}
