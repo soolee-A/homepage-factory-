@@ -298,11 +298,15 @@ export default function App() {
                          focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none font-medium"
             >
               {[1, 2, 3, 4, 5].map(num => (
-                <option key={num} value={num}>성인 {num}명</option>
+                <option key={num} value={num}>총 {num}명</option>
               ))}
               <option value="group">단체 (6명 이상)</option>
             </select>
           </div>
+          <p className="mt-2 text-xs text-gray-400 font-medium leading-relaxed">
+            유아(만 2세 이하)·어린이(만 12세 이하)도 이동 인원에 포함해 주세요.
+            유모차·카시트 등 대형 짐이 있는 경우 택시 또는 공항 리무진 이용을 권장합니다.
+          </p>
         </div>
 
         {/* 다음 버튼 */}
