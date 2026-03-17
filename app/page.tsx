@@ -246,15 +246,15 @@ export default function App() {
               가는 날 (출발일)
             </label>
             <div className="relative w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4
-                            focus-within:ring-2 focus-within:ring-blue-500 transition-all overflow-hidden flex items-center">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
-              <span className="text-gray-900 pointer-events-none font-medium text-sm">
+                            focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10" size={17} />
+              <span className="text-gray-900 pointer-events-none font-medium text-sm select-none">
                 {schedule.departureDate ? getDayLabel(schedule.departureDate) : '날짜 선택'}
               </span>
               <input
                 type="date" name="departureDate" value={schedule.departureDate}
                 onChange={handleScheduleChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                 required
               />
             </div>
@@ -264,15 +264,15 @@ export default function App() {
               오는 날 (귀국일)
             </label>
             <div className="relative w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4
-                            focus-within:ring-2 focus-within:ring-blue-500 transition-all overflow-hidden flex items-center">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
-              <span className="text-gray-900 pointer-events-none font-medium text-sm">
+                            focus-within:ring-2 focus-within:ring-blue-500 transition-all flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10" size={17} />
+              <span className="text-gray-900 pointer-events-none font-medium text-sm select-none">
                 {schedule.returnDate ? getDayLabel(schedule.returnDate) : '날짜 선택'}
               </span>
               <input
                 type="date" name="returnDate" value={schedule.returnDate}
                 onChange={handleScheduleChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
                 required
               />
             </div>
