@@ -68,11 +68,12 @@ export default function App() {
   const [transport, setTransport] = useState('');
 
   // ── 비즈니스 로직 ──────────────────────────────────────────────────────
-  const formatKoreanDate = (dateStr: string): string => {
+  const getDayLabel = (dateStr: string): string => {
     if (!dateStr) return '';
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     const d = new Date(dateStr + 'T00:00:00');
-    return `${d.getMonth() + 1}월 ${d.getDate()}일(${days[d.getDay()]})`;
+    if (isNaN(d.getTime())) return '';
+    return `${dateStr}(${days[d.getDay()]})`;
   };
 
   const checkPublicTransitAvailability = (time: string): boolean => {
@@ -244,40 +245,36 @@ export default function App() {
             <label className="block text-xs font-black text-slate-500 mb-1.5 uppercase tracking-widest">
               가는 날 (출발일)
             </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-2.5 text-gray-400" size={17} />
+            <div className="relative w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4
+                            focus-within:ring-2 focus-within:ring-blue-500 transition-all overflow-hidden flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
+              <span className="text-gray-900 pointer-events-none font-medium text-sm">
+                {schedule.departureDate ? getDayLabel(schedule.departureDate) : '날짜 선택'}
+              </span>
               <input
                 type="date" name="departureDate" value={schedule.departureDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl
-                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-sm"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 required
               />
-              {schedule.departureDate && (
-                <p className="mt-1 text-xs font-black text-blue-600 pl-1">
-                  {formatKoreanDate(schedule.departureDate)}
-                </p>
-              )}
             </div>
           </div>
           <div>
             <label className="block text-xs font-black text-slate-500 mb-1.5 uppercase tracking-widest">
               오는 날 (귀국일)
             </label>
-            <div className="relative">
-              <Calendar className="absolute left-3 top-2.5 text-gray-400" size={17} />
+            <div className="relative w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-9 pr-4
+                            focus-within:ring-2 focus-within:ring-blue-500 transition-all overflow-hidden flex items-center">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={17} />
+              <span className="text-gray-900 pointer-events-none font-medium text-sm">
+                {schedule.returnDate ? getDayLabel(schedule.returnDate) : '날짜 선택'}
+              </span>
               <input
                 type="date" name="returnDate" value={schedule.returnDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl
-                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-sm"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 required
               />
-              {schedule.returnDate && (
-                <p className="mt-1 text-xs font-black text-blue-600 pl-1">
-                  {formatKoreanDate(schedule.returnDate)}
-                </p>
-              )}
             </div>
           </div>
         </div>
