@@ -70,6 +70,17 @@ export const airports: Airport[] = [
     fact2026: "Gateway to central Korea. Direct charter flights from China, Japan, and Southeast Asia.",
     curfewWarning: "Strict curfew 22:00–07:00. Very limited international flights — verify your schedule.",
   },
+  {
+    code: "PUS",
+    name: "Gimhae International Airport",
+    city: "Busan",
+    terminal: "International / Domestic",
+    is24Hours: false,
+    curfewStart: 23,
+    curfewEnd: 6,
+    fact2026: "Second largest gateway to Korea. Direct links to major Asian hubs.",
+    curfewWarning: "Strict night curfew 23:00–06:00. Late flights often diverted to Incheon.",
+  },
 ];
 
 export const airportTimeGuides: Record<string, Record<string, TimeGuide>> = {
@@ -187,6 +198,33 @@ export const airportTimeGuides: Record<string, Record<string, TimeGuide>> = {
         "If connecting to Cheongju late: take a taxi from Osong KTX Station (~20 min).",
         "Very limited hotel options near airport — book in central Cheongju or near Osong.",
         "Pre-book Kakao T or a private transfer via your hotel concierge.",
+      ],
+    },
+  },
+  PUS: {
+    day: {
+      title: "Daytime Transfer (06:00 – 23:00)",
+      availability: "High",
+      description:
+        "Gimhae Light Rail is the fastest way to connect to Busan Metro Lines 2 and 3.",
+      youtubeId: "p8F5Z5YgMoA",
+      steps: [
+        "Follow signs for 'Light Rail' (Purple line) outside the terminal.",
+        "Take Light Rail to Sasang Station (Line 2) or Daejeo Station (Line 3).",
+        "Limousine buses are also available to Haeundae and Busan Station areas.",
+        "Taxis are readily available — metered, ~₩25,000 to Seomyeon area.",
+      ],
+    },
+    night: {
+      title: "Late Night Transfer (23:00 – 06:00)",
+      availability: "None",
+      description:
+        "Airport is CLOSED. No light rail or bus service. Only taxis from outside arrivals.",
+      youtubeId: "p8F5Z5YgMoA",
+      steps: [
+        "Strict 23:00 curfew. Very few flights land near this time.",
+        "If arriving late, only licensed taxis are available at the terminal exit.",
+        "Pre-booking a taxi via Kakao T is highly recommended.",
       ],
     },
   },
@@ -329,6 +367,38 @@ export const transportData: Record<string, Transport[]> = {
       lastDeparture: "24:00",
       bookingUrl: "https://kakaotaxi.kakao.com/",
       tip: "For Cheongju city center or Osong KTX station connections.",
+    },
+  ],
+  PUS: [
+    {
+      type: "train",
+      name: "Busan-Gimhae Light Rail",
+      duration: "20 min to Sasang",
+      priceKRW: "₩1,600",
+      firstDeparture: "05:00",
+      lastDeparture: "23:30",
+      bookingUrl: "http://www.bglrt.com/",
+      tip: "Fastest way to Sasang Station (Line 2 transfer).",
+    },
+    {
+      type: "bus",
+      name: "Airport Limousine",
+      duration: "60 min",
+      priceKRW: "₩10,000",
+      firstDeparture: "06:00",
+      lastDeparture: "22:00",
+      bookingUrl: "https://www.bglrt.com/",
+      tip: "Direct to Haeundae and Busan Station area hotels.",
+    },
+    {
+      type: "taxi",
+      name: "Local Taxi",
+      duration: "30–45 min",
+      priceKRW: "₩25,000–35,000",
+      firstDeparture: "00:00",
+      lastDeparture: "24:00",
+      bookingUrl: "https://kakaotaxi.kakao.com/",
+      tip: "Comfortable and direct to your destination.",
     },
   ],
 };
