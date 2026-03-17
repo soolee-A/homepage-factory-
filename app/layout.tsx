@@ -7,17 +7,40 @@ const inter = Inter({ subsets: ["latin"] });
 const BASE_URL = "https://wtoko.com";
 
 export const metadata: Metadata = {
-  title: "Wtoko – Korea Arrival Guide 2026 | Incheon Airport, K-ETA, No Scams",
+  title: {
+    default: "Wtoko – Korea Arrival Guide 2026 | Incheon Airport, K-ETA, No Scams",
+    template: "%s | Wtoko Korea Guide"
+  },
   description: "100% fact-based Korea arrival guide 2026. K-ETA official cost ₩10,000, Incheon Airport transport, curfew times, entry documents. No Scams, Just Facts.",
-  keywords: ["South Korea Travel Guide 2026", "Incheon Airport Entry", "K-ETA official site", "Korea arrival checklist", "Gimpo airport curfew"],
+  keywords: ["South Korea Travel Guide 2026", "Incheon Airport Entry", "K-ETA official site", "Korea arrival checklist", "Gimpo airport curfew", "Jeju Airport", "Cheongju Airport"],
+  authors: [{ name: "Wtoko Team" }],
+  creator: "Wtoko",
+  publisher: "Wtoko",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(BASE_URL),
   alternates: {
-    canonical: BASE_URL,
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   openGraph: {
     title: "Wtoko – Korea Arrival Survival Kit 2026",
     description: "No Scams, Just Facts. Complete Korea entry guide — K-ETA, airports, transport for 2026.",
     type: "website",
-    url: BASE_URL,
+    url: "/",
     locale: "en_US",
     siteName: "Wtoko",
   },
@@ -40,6 +63,19 @@ export default function RootLayout({
     url: BASE_URL,
     inLanguage: "en",
     description: "100% fact-based Korea arrival guide 2026.",
+    publisher: {
+      "@type": "Organization",
+      "name": "Wtoko",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${BASE_URL}/logo.png`
+      }
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      "target": `${BASE_URL}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
   };
 
   return (
