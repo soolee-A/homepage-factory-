@@ -31,16 +31,18 @@ interface AirportOption {
   nameKo: string;
   terminal?: string;
   region: string;
+  is24h?: boolean;
+  curfew?: string; // e.g. "23:00–06:00"
 }
 
 // ── 공항 데이터 ─────────────────────────────────────────────────────────────
 const AIRPORTS: AirportOption[] = [
-  { id: 'icn_t1', code: 'ICN', nameKo: '인천국제공항', terminal: '제1터미널', region: '서울·수도권' },
-  { id: 'icn_t2', code: 'ICN', nameKo: '인천국제공항', terminal: '제2터미널', region: '서울·수도권' },
-  { id: 'gmp',    code: 'GMP', nameKo: '김포국제공항',  region: '서울·수도권' },
-  { id: 'pus',    code: 'PUS', nameKo: '김해국제공항',  region: '부산' },
-  { id: 'cju',    code: 'CJU', nameKo: '제주국제공항',  region: '제주도' },
-  { id: 'cjj',    code: 'CJJ', nameKo: '청주국제공항',  region: '충청권' },
+  { id: 'icn_t1', code: 'ICN', nameKo: '인천국제공항', terminal: '제1터미널', region: '서울·수도권', is24h: true },
+  { id: 'icn_t2', code: 'ICN', nameKo: '인천국제공항', terminal: '제2터미널', region: '서울·수도권', is24h: true },
+  { id: 'gmp',    code: 'GMP', nameKo: '김포국제공항',  region: '서울·수도권', curfew: '23:00–06:00' },
+  { id: 'pus',    code: 'PUS', nameKo: '김해국제공항',  region: '부산',        curfew: '23:00–06:00' },
+  { id: 'cju',    code: 'CJU', nameKo: '제주국제공항',  region: '제주도',      curfew: '23:00–06:00' },
+  { id: 'cjj',    code: 'CJJ', nameKo: '청주국제공항',  region: '충청권',      curfew: '22:00–07:00' },
 ];
 
 // ── Main Component ─────────────────────────────────────────────────────────
@@ -211,6 +213,16 @@ export default function App() {
                     ${isSelected ? 'text-blue-400' : 'text-slate-400'}`}>
                     {ap.region}
                   </p>
+                  {/* 운영 시간 표시 */}
+                  {ap.is24h ? (
+                    <p className="text-[10px] mt-1.5 font-black text-emerald-600">
+                      ● 24시간 운영
+                    </p>
+                  ) : ap.curfew ? (
+                    <p className="text-[10px] mt-1.5 font-black text-red-500">
+                      ✕ 야간 폐쇄 {ap.curfew}
+                    </p>
+                  ) : null}
                 </button>
               );
             })}
