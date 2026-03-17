@@ -257,7 +257,7 @@ export default function App() {
               />
               {schedule.departureDate && (
                 <span className="absolute right-3 top-3 text-sm font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
-                  {getDayOfWeek(schedule.departureDate)}요일
+                  ({getDayOfWeek(schedule.departureDate)})
                 </span>
               )}
             </div>
@@ -277,7 +277,7 @@ export default function App() {
               />
               {schedule.returnDate && (
                 <span className="absolute right-3 top-3 text-sm font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
-                  {getDayOfWeek(schedule.returnDate)}요일
+                  ({getDayOfWeek(schedule.returnDate)})
                 </span>
               )}
             </div>
@@ -566,6 +566,42 @@ export default function App() {
           </nav>
         </div>
       </header>
+
+      {/* Welcome Hero Banner */}
+      <section className="bg-gradient-to-br from-[#0F172A] via-[#1E3A5F] to-[#1E40AF] text-white">
+        <div className="container mx-auto px-6 py-10 md:py-14 max-w-4xl flex flex-col md:flex-row items-center gap-6 md:gap-10">
+          {/* 텍스트 */}
+          <div className="flex-1 text-center md:text-left">
+            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-300 mb-2">
+              Korea Arrival Concierge
+            </p>
+            <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight mb-3">
+              Welcome to{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
+                Korea
+              </span>
+            </h1>
+            <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed max-w-md">
+              We're here to make your arrival in Korea seamless and stress-free.<br className="hidden md:block" />
+              Your trusted guide from the airport to the city.
+            </p>
+          </div>
+          {/* 신뢰 뱃지 */}
+          <div className="flex md:flex-col gap-3 flex-wrap justify-center">
+            {[
+              { icon: '✈', label: '6 Major Airports' },
+              { icon: '🕐', label: '24/7 Transit Info' },
+              { icon: '🛡', label: 'Trusted & Verified' },
+            ].map(b => (
+              <div key={b.label}
+                className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-2xl px-4 py-2 backdrop-blur-sm">
+                <span className="text-base">{b.icon}</span>
+                <span className="text-xs font-black text-white whitespace-nowrap">{b.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 메인 컨텐츠 */}
       <main className="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
