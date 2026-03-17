@@ -3,12 +3,73 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --navy: #0F172A;
+  --royal: #2563EB;
+  --kvibe: #CD2E3A;
+  --premium: #F8FAFC;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: white;
+  background: #0F172A;
+  color: #F8FAFC;
+}
+
+/* Glassmorphism utilities */
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-md {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #0F172A;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.6);
+}
+
+/* Select option dark styling */
+select option {
+  background-color: #0F172A;
+  color: #F8FAFC;
 }
