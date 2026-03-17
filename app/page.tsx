@@ -120,7 +120,7 @@ export default function App() {
   const renderProgressBar = () => {
     const steps = ['도착 공항/일정', '도착 시간', '이동 수단', '이동 가이드'];
     return (
-      <div className="w-full py-6 px-6 bg-white shadow-sm mb-8 rounded-2xl border border-gray-100">
+      <div className="w-full py-4 px-6 bg-white shadow-sm mb-4 rounded-2xl border border-gray-100">
         <div className="flex justify-between items-center max-w-3xl mx-auto relative">
           {/* 배경 트랙 */}
           <div className="absolute top-5 left-0 w-full h-[3px] bg-gray-100 -z-10 rounded-full" />
@@ -161,23 +161,23 @@ export default function App() {
 
   // ── Step 1: 공항 버튼 + 일정 입력 ─────────────────────────────────────
   const renderStep1 = () => (
-    <div className="bg-white rounded-[2.5rem] shadow-xl p-8 md:p-10 max-w-3xl mx-auto border border-gray-100 animate-zoom-in">
+    <div className="bg-white rounded-[2.5rem] shadow-xl p-5 md:p-7 max-w-3xl mx-auto border border-gray-100 animate-zoom-in">
 
-      {/* 섹션 헤더 */}
-      <div className="mb-8">
-        <p className="text-xs font-black text-blue-600 uppercase tracking-[0.2em] mb-1">Step 01</p>
-        <h2 className="text-2xl font-black text-slate-900 flex items-center gap-3">
-          <MapPin className="text-blue-600" size={24} />
+      {/* 섹션 헤더 — 한 줄 compact */}
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+          <MapPin className="text-blue-600" size={18} />
           도착 공항 및 기본 일정
         </h2>
+        <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-full uppercase tracking-widest">Step 01</span>
       </div>
 
-      <form onSubmit={handleStep1Submit} className="space-y-8">
+      <form onSubmit={handleStep1Submit} className="space-y-5">
 
         {/* 공항 버튼 그리드 */}
         <div>
-          <label className="block text-sm font-black text-slate-700 mb-3 uppercase tracking-widest">
-            도착 공항 선택
+          <label className="block text-xs font-black text-slate-500 mb-2 uppercase tracking-widest">
+            도착 공항 선택 <span className="text-red-400">*</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {AIRPORTS.map(ap => {
@@ -187,48 +187,46 @@ export default function App() {
                   key={ap.id}
                   type="button"
                   onClick={() => handleAirportSelect(ap)}
-                  className={`relative flex flex-col items-start p-4 rounded-2xl border-2 text-left
-                    transition-all duration-200 group
+                  className={`relative flex flex-col items-start p-3 rounded-2xl border-2 text-left
+                    transition-all duration-200
                     ${isSelected
-                      ? 'border-blue-600 bg-blue-50 shadow-lg shadow-blue-100'
+                      ? 'border-blue-600 bg-blue-50 shadow-md shadow-blue-100'
                       : 'border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-white hover:shadow-md'
                     }`}
                 >
                   {/* 체크 뱃지 */}
                   {isSelected && (
-                    <div className="absolute top-3 right-3 w-5 h-5 bg-blue-600 rounded-full
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-blue-600 rounded-full
                                     flex items-center justify-center animate-zoom-in">
-                      <Check size={11} strokeWidth={3} className="text-white" />
+                      <Check size={9} strokeWidth={3} className="text-white" />
                     </div>
                   )}
-                  {/* 코드 뱃지 */}
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full mb-2 tracking-widest
-                    ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                    {ap.code}
-                  </span>
+                  {/* 상단: 코드 + 공항명 한 줄 */}
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full tracking-widest
+                      ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                      {ap.code}
+                    </span>
+                    {ap.terminal && (
+                      <span className={`text-[10px] font-semibold
+                        ${isSelected ? 'text-blue-600' : 'text-slate-400'}`}>
+                        {ap.terminal}
+                      </span>
+                    )}
+                  </div>
                   <p className={`text-sm font-black leading-tight
                     ${isSelected ? 'text-blue-900' : 'text-slate-800'}`}>
                     {ap.nameKo}
                   </p>
-                  {ap.terminal && (
-                    <p className={`text-[11px] font-semibold mt-0.5
-                      ${isSelected ? 'text-blue-600' : 'text-slate-400'}`}>
-                      {ap.terminal}
-                    </p>
-                  )}
-                  <p className={`text-[10px] mt-1 font-medium
+                  <p className={`text-[10px] mt-0.5 font-medium
                     ${isSelected ? 'text-blue-400' : 'text-slate-400'}`}>
                     {ap.region}
                   </p>
-                  {/* 운영 시간 표시 */}
+                  {/* 운영 시간 */}
                   {ap.is24h ? (
-                    <p className="text-[10px] mt-1.5 font-black text-emerald-600">
-                      ● 24시간 운영
-                    </p>
+                    <p className="text-[9px] mt-1 font-black text-emerald-600">● 24시간</p>
                   ) : ap.curfew ? (
-                    <p className="text-[10px] mt-1.5 font-black text-red-500">
-                      ✕ 야간 폐쇄 {ap.curfew}
-                    </p>
+                    <p className="text-[9px] mt-1 font-black text-red-500">✕ 폐쇄 {ap.curfew}</p>
                   ) : null}
                 </button>
               );
@@ -241,42 +239,42 @@ export default function App() {
         </div>
 
         {/* 날짜 입력 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">
+            <label className="block text-xs font-black text-slate-500 mb-1.5 uppercase tracking-widest">
               가는 날 (출발일)
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Calendar className="absolute left-3 top-2.5 text-gray-400" size={17} />
               <input
                 type="date" name="departureDate" value={schedule.departureDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
-                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl
+                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-sm"
                 required
               />
               {schedule.departureDate && (
-                <p className="mt-1.5 text-sm font-black text-blue-600 pl-1">
+                <p className="mt-1 text-xs font-black text-blue-600 pl-1">
                   {formatKoreanDate(schedule.departureDate)}
                 </p>
               )}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">
+            <label className="block text-xs font-black text-slate-500 mb-1.5 uppercase tracking-widest">
               오는 날 (귀국일)
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-3 text-gray-400" size={20} />
+              <Calendar className="absolute left-3 top-2.5 text-gray-400" size={17} />
               <input
                 type="date" name="returnDate" value={schedule.returnDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
-                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
+                className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl
+                           focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-sm"
                 required
               />
               {schedule.returnDate && (
-                <p className="mt-1.5 text-sm font-black text-blue-600 pl-1">
+                <p className="mt-1 text-xs font-black text-blue-600 pl-1">
                   {formatKoreanDate(schedule.returnDate)}
                 </p>
               )}
@@ -286,16 +284,16 @@ export default function App() {
 
         {/* 인원 선택 */}
         <div>
-          <label className="block text-sm font-black text-slate-700 mb-2 uppercase tracking-widest">
-            이동 인원
+          <label className="block text-xs font-black text-slate-500 mb-1.5 uppercase tracking-widest">
+            이동 인원 (유아·어린이 포함)
           </label>
           <div className="relative">
-            <Users className="absolute left-3 top-3 text-gray-400" size={20} />
+            <Users className="absolute left-3 top-2.5 text-gray-400" size={17} />
             <select
               name="passengers" value={schedule.passengers}
               onChange={handleScheduleChange}
-              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
-                         focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none font-medium"
+              className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl
+                         focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none font-medium text-sm"
             >
               {[1, 2, 3, 4, 5].map(num => (
                 <option key={num} value={num}>총 {num}명</option>
@@ -303,25 +301,22 @@ export default function App() {
               <option value="group">단체 (6명 이상)</option>
             </select>
           </div>
-          <p className="mt-2 text-xs text-gray-400 font-medium leading-relaxed">
-            유아(만 2세 이하)·어린이(만 12세 이하)도 이동 인원에 포함해 주세요.
-            유모차·카시트 등 대형 짐이 있는 경우 택시 또는 공항 리무진 이용을 권장합니다.
+          <p className="mt-1.5 text-[11px] text-gray-400 font-medium leading-relaxed">
+            유아(만 2세↓)·어린이(만 12세↓) 포함 · 유모차·카시트 동반 시 택시/리무진 권장
           </p>
         </div>
 
         {/* 다음 버튼 */}
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={!selectedAirportId}
-            className={`w-full py-4 font-black text-lg rounded-2xl transition-all duration-200
-              ${selectedAirportId
-                ? 'bg-slate-900 hover:bg-blue-600 text-white shadow-xl shadow-slate-200 hover:-translate-y-0.5'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
-          >
-            다음 단계로 →
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={!selectedAirportId}
+          className={`w-full py-3 font-black text-base rounded-2xl transition-all duration-200
+            ${selectedAirportId
+              ? 'bg-slate-900 hover:bg-blue-600 text-white shadow-lg shadow-slate-200 hover:-translate-y-0.5'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+        >
+          다음 단계로 →
+        </button>
       </form>
     </div>
   );
@@ -567,44 +562,38 @@ export default function App() {
         </div>
       </header>
 
-      {/* Welcome Hero Banner */}
-      <section className="bg-gradient-to-br from-[#0F172A] via-[#1E3A5F] to-[#1E40AF] text-white">
-        <div className="container mx-auto px-6 py-10 md:py-14 max-w-4xl flex flex-col md:flex-row items-center gap-6 md:gap-10">
-          {/* 텍스트 */}
-          <div className="flex-1 text-center md:text-left">
-            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-blue-300 mb-2">
-              Korea Arrival Concierge
-            </p>
-            <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight mb-3">
-              Welcome to{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">
-                Korea
-              </span>
-            </h1>
-            <p className="text-slate-300 text-sm md:text-base font-medium leading-relaxed max-w-md">
-              We're here to make your arrival in Korea seamless and stress-free.<br className="hidden md:block" />
-              Your trusted guide from the airport to the city.
-            </p>
+      {/* Welcome Hero Banner — compact slim bar */}
+      <section className="bg-gradient-to-r from-[#0F172A] via-[#1E3A5F] to-[#1E40AF] text-white">
+        <div className="container mx-auto px-6 py-4 max-w-4xl flex items-center justify-between gap-4 flex-wrap">
+          {/* 왼쪽: 타이틀 */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+              <PlaneLanding size={16} className="text-blue-300" />
+            </div>
+            <div>
+              <h1 className="text-base font-black leading-none tracking-tight">
+                Welcome to{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300">Korea</span>
+              </h1>
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                Your trusted airport-to-city arrival guide
+              </p>
+            </div>
           </div>
-          {/* 신뢰 뱃지 */}
-          <div className="flex md:flex-col gap-3 flex-wrap justify-center">
-            {[
-              { icon: '✈', label: '6 Major Airports' },
-              { icon: '🕐', label: '24/7 Transit Info' },
-              { icon: '🛡', label: 'Trusted & Verified' },
-            ].map(b => (
-              <div key={b.label}
-                className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-2xl px-4 py-2 backdrop-blur-sm">
-                <span className="text-base">{b.icon}</span>
-                <span className="text-xs font-black text-white whitespace-nowrap">{b.label}</span>
-              </div>
+          {/* 오른쪽: 뱃지 */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {['✈ 6 Airports', '🕐 24/7 Info', '🛡 Verified'].map(b => (
+              <span key={b}
+                className="text-[11px] font-black text-white/80 bg-white/10 border border-white/15 rounded-full px-3 py-1">
+                {b}
+              </span>
             ))}
           </div>
         </div>
       </section>
 
       {/* 메인 컨텐츠 */}
-      <main className="container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+      <main className="container mx-auto px-4 py-4 md:py-6 max-w-4xl">
         {renderProgressBar()}
         <div>
           {step === 1 && renderStep1()}
