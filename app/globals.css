@@ -10,8 +10,8 @@
 }
 
 body {
-  background: #0F172A;
-  color: #F8FAFC;
+  background: white;
+  color: #0f172a;
 }
 
 /* Glassmorphism utilities */
@@ -53,6 +53,33 @@ body {
   opacity: 0;
 }
 
+/* Step transition animations (replaces tailwindcss-animate plugin) */
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInBottom {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-zoom-in {
+  animation: zoomIn 0.3s ease forwards;
+  opacity: 0;
+}
+.animate-slide-right {
+  animation: slideInRight 0.3s ease forwards;
+  opacity: 0;
+}
+.animate-slide-bottom {
+  animation: slideInBottom 0.5s ease forwards;
+  opacity: 0;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
@@ -68,8 +95,8 @@ body {
   background: rgba(37, 99, 235, 0.6);
 }
 
-/* Select option dark styling */
-select option {
+/* Dark page select option override (airport detail pages) */
+.dark-select option {
   background-color: #0F172A;
   color: #F8FAFC;
 }
