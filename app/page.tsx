@@ -68,11 +68,11 @@ export default function App() {
   const [transport, setTransport] = useState('');
 
   // ── 비즈니스 로직 ──────────────────────────────────────────────────────
-  const getDayOfWeek = (dateStr: string): string => {
+  const formatKoreanDate = (dateStr: string): string => {
     if (!dateStr) return '';
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     const d = new Date(dateStr + 'T00:00:00');
-    return days[d.getDay()];
+    return `${d.getMonth() + 1}월 ${d.getDate()}일(${days[d.getDay()]})`;
   };
 
   const checkPublicTransitAvailability = (time: string): boolean => {
@@ -251,14 +251,14 @@ export default function App() {
               <input
                 type="date" name="departureDate" value={schedule.departureDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-10 pr-20 py-3 bg-gray-50 border border-gray-200 rounded-xl
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
                            focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
                 required
               />
               {schedule.departureDate && (
-                <span className="absolute right-3 top-3 text-sm font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
-                  ({getDayOfWeek(schedule.departureDate)})
-                </span>
+                <p className="mt-1.5 text-sm font-black text-blue-600 pl-1">
+                  {formatKoreanDate(schedule.departureDate)}
+                </p>
               )}
             </div>
           </div>
@@ -271,14 +271,14 @@ export default function App() {
               <input
                 type="date" name="returnDate" value={schedule.returnDate}
                 onChange={handleScheduleChange}
-                className="w-full pl-10 pr-20 py-3 bg-gray-50 border border-gray-200 rounded-xl
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
                            focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium"
                 required
               />
               {schedule.returnDate && (
-                <span className="absolute right-3 top-3 text-sm font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">
-                  ({getDayOfWeek(schedule.returnDate)})
-                </span>
+                <p className="mt-1.5 text-sm font-black text-blue-600 pl-1">
+                  {formatKoreanDate(schedule.returnDate)}
+                </p>
               )}
             </div>
           </div>
