@@ -1,461 +1,752 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
-  MapPin,
-  Calendar,
-  Users,
-  CheckCircle,
-  Clock,
-  Train,
-  Bus,
-  Car,
-  Footprints,
-  Info,
-  AlertTriangle,
-  PlaneLanding,
+  PlaneLanding, MapPin, Calendar, Users, Clock, ChevronDown, Check,
+  AlertTriangle, Info, Train, Car, Bus, Smartphone, CreditCard,
+  Utensils, ShieldCheck, PhoneCall, Heart, Sparkles, Copy, CheckCircle,
+  Moon, Sun, Snowflake, Leaf, Flower2, ArrowRight, Globe, Wifi,
 } from 'lucide-react';
 
-interface Schedule {
-  airport: string;
-  departureDate: string;
-  returnDate: string;
-  passengers: number | string;
+// ── Types ──────────────────────────────────────────────────────────────
+interface Airport {
+  id: string;
+  code: string;
+  nameEn: string;
+  nameKo: string;
+  terminal?: string;
+  region: string;
+  is24h: boolean;
+  curfew?: string;
+  tip: string;
+  shuttleNote?: string;
 }
 
-export default function App() {
-  const [step, setStep] = useState(1);
+// ── Airport Data ────────────────────────────────────────────────────────
+const AIRPORTS: Airport[] = [
+  { id: 'icn_t1', code: 'ICN', nameEn: 'Incheon T1', nameKo: '인천 제1터미널', terminal: 'T1', region: 'Seoul / Gyeonggi', is24h: true, tip: 'Take the Shuttle Train inside the terminal to reach Immigration — follow yellow signs.', shuttleNote: 'Shuttle Train required for some gates' },
+  { id: 'icn_t2', code: 'ICN', nameEn: 'Incheon T2', nameKo: '인천 제2터미널', terminal: 'T2', region: 'Seoul / Gyeonggi', is24h: true, tip: 'T2 is modern and compact — no shuttle needed. Mostly SkyTeam (Korean Air, Delta).' },
+  { id: 'gmp',    code: 'GMP', nameEn: 'Gimpo', nameKo: '김포국제공항', region: 'Seoul City', is24h: false, curfew: '23:00–06:00', tip: 'Closest airport to downtown Seoul. Direct subway to Hongdae in 20 min.' },
+  { id: 'pus',    code: 'PUS', nameEn: 'Gimhae', nameKo: '김해국제공항', region: 'Busan', is24h: false, curfew: '23:00–06:00', tip: 'Gateway to southern Korea. Busan subway line 3 connects directly to city center.' },
+  { id: 'cju',    code: 'CJU', nameEn: 'Jeju', nameKo: '제주국제공항', region: 'Jeju Island', is24h: false, curfew: '23:00–06:00', tip: 'Direct international arrivals may qualify for 30-day Visa-free entry to Jeju only.' },
+  { id: 'cjj',    code: 'CJJ', nameEn: 'Cheongju', nameKo: '청주국제공항', region: 'Central Korea', is24h: false, curfew: '22:00–07:00', tip: 'Small and easy. Popular for K-Pop tours. Airport bus to downtown in 30 min.' },
+];
 
-  const [schedule, setSchedule] = useState<Schedule>({
-    airport: '인천국제공항 (ICN)',
-    departureDate: '2026-04-01',
-    returnDate: '2026-04-15',
-    passengers: 1,
-  });
+// ── Helpers ─────────────────────────────────────────────────────────────
+function addHour(time: string, h = 1): string {
+  const [hr, mn] = time.split(':').map(Number);
+  const total = (hr + h) % 24;
+  return `${String(total).padStart(2, '0')}:${String(mn).padStart(2, '0')}`;
+}
 
-  const [arrivalTime, setArrivalTime] = useState('14:00');
-  const [transport, setTransport] = useState('');
+function getDayLabel(dateStr: string): { label: string; isWeekend: boolean } {
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const parts = dateStr.split('-');
+  const d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+  if (isNaN(d.getTime())) return { label: dateStr, isWeekend: false };
+  const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+  return { label: `${dateStr} (${days[d.getDay()]})`, isWeekend };
+}
 
-  const getDayInfo = (dateString: string) => {
-    if (!dateString) return { text: '', isWeekend: false, fullText: '날짜 선택' };
-    const days = ['일', '월', '화', '수', '목', '금', '토'];
-    const date = new Date(dateString + 'T00:00:00');
-    if (isNaN(date.getTime())) return { text: '', isWeekend: false, fullText: dateString };
-    const dayIndex = date.getDay();
-    return {
-      text: `(${days[dayIndex]})`,
-      isWeekend: dayIndex === 0 || dayIndex === 6,
-      fullText: `${dateString}(${days[dayIndex]})`,
-    };
+function getSeason(dateStr: string) {
+  const m = new Date(dateStr).getMonth() + 1;
+  if (m >= 3 && m <= 5) return 'Spring';
+  if (m >= 6 && m <= 8) return 'Summer';
+  if (m >= 9 && m <= 11) return 'Autumn';
+  return 'Winter';
+}
+
+// ── Copy Button ─────────────────────────────────────────────────────────
+function CopyBtn({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
+  return (
+    <button onClick={copy} className="ml-2 p-1 rounded text-slate-400 hover:text-blue-600 transition-colors">
+      {copied ? <CheckCircle size={14} className="text-green-500" /> : <Copy size={14} />}
+    </button>
+  );
+}
 
-  const checkPublicTransitAvailability = (time: string): boolean => {
-    if (!time) return false;
-    const [hour, minute] = time.split(':').map(Number);
-    const timeInMinutes = hour * 60 + minute;
-    return timeInMinutes >= 5 * 60 && timeInMinutes <= 23 * 60 + 30;
-  };
-
-  const isTransitAvailable = checkPublicTransitAvailability(arrivalTime);
-
-  const handleScheduleChange = (
-    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    setSchedule(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleStep1Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep(2);
-  };
-
-  const handleStep2Submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setStep(3);
-  };
-
-  const handleTransportSelect = (method: string) => {
-    setTransport(method);
-    setStep(4);
-  };
-
-  const renderProgressBar = () => {
-    const steps = ['도착 공항/일정', '도착 시간', '이동 수단', '이동 가이드'];
-    return (
-      <div className="w-full py-6 px-4 bg-white shadow-sm mb-6 rounded-xl">
-        <div className="flex justify-between items-center max-w-3xl mx-auto relative">
-          <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 -translate-y-1/2 rounded" />
-          <div
-            className="absolute top-1/2 left-0 h-1 bg-blue-600 -z-10 -translate-y-1/2 transition-all duration-500 rounded"
-            style={{ width: `${((step - 1) / 3) * 100}%` }}
-          />
-          {steps.map((s, index) => {
-            const stepNumber = index + 1;
-            const isActive = step >= stepNumber;
-            const isCurrent = step === stepNumber;
-            return (
-              <div key={index} className="flex flex-col items-center bg-white px-2">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-300 ${
-                    isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-500'
-                  } ${isCurrent ? 'ring-4 ring-blue-100' : ''}`}
-                >
-                  {stepNumber < step ? <CheckCircle size={20} /> : stepNumber}
-                </div>
-                <span className={`mt-2 text-xs font-medium ${isActive ? 'text-blue-700' : 'text-gray-400'}`}>
-                  {s}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+// ── Phrase Card ─────────────────────────────────────────────────────────
+function PhraseCard({ en, ko, romanized }: { en: string; ko: string; romanized: string }) {
+  return (
+    <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+      <p className="text-xs text-slate-400 font-semibold mb-1">{en}</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xl font-black text-slate-900">{ko}</p>
+        <CopyBtn text={ko} />
       </div>
-    );
-  };
-
-  const renderStep1 = () => {
-    const depInfo = getDayInfo(schedule.departureDate);
-    const arrInfo = getDayInfo(schedule.returnDate);
-
-    return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-3xl mx-auto border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-          <MapPin className="mr-3 text-blue-600" /> 도착 공항 및 기본 일정
-        </h2>
-        <form onSubmit={handleStep1Submit} className="space-y-6">
-
-          <div className="relative">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">도착 공항</label>
-            <div className="relative">
-              <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
-              <select
-                name="airport" value={schedule.airport} onChange={handleScheduleChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none font-medium"
-              >
-                <option value="인천국제공항 (ICN)">인천국제공항 (ICN)</option>
-                <option value="김포국제공항 (GMP)">김포국제공항 (GMP)</option>
-                <option value="김해국제공항 (PUS)">김해국제공항 (PUS) - 부산</option>
-                <option value="제주국제공항 (CJU)">제주국제공항 (CJU)</option>
-                <option value="청주국제공항 (CJJ)">청주국제공항 (CJJ)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">가는 날 (출발일)</label>
-              <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 focus-within:ring-2 focus-within:ring-blue-500 transition-all cursor-pointer">
-                <Calendar className="text-gray-400 mr-2 flex-shrink-0" size={20} />
-                <span
-                  className={`text-[15px] font-medium z-10 pointer-events-none ${
-                    depInfo.isWeekend ? 'text-[#D85A30]' : 'text-gray-900'
-                  }`}
-                >
-                  {depInfo.fullText}
-                </span>
-                <input
-                  type="date"
-                  name="departureDate"
-                  value={schedule.departureDate}
-                  onChange={handleScheduleChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">오는 날 (귀국일)</label>
-              <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 focus-within:ring-2 focus-within:ring-blue-500 transition-all cursor-pointer">
-                <Calendar className="text-gray-400 mr-2 flex-shrink-0" size={20} />
-                <span
-                  className={`text-[15px] font-medium z-10 pointer-events-none ${
-                    arrInfo.isWeekend ? 'text-[#D85A30]' : 'text-gray-900'
-                  }`}
-                >
-                  {arrInfo.fullText}
-                </span>
-                <input
-                  type="date"
-                  name="returnDate"
-                  value={schedule.returnDate}
-                  onChange={handleScheduleChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">이동 인원</label>
-            <div className="relative">
-              <Users className="absolute left-3 top-3 text-gray-400" size={20} />
-              <select
-                name="passengers" value={schedule.passengers} onChange={handleScheduleChange}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none"
-              >
-                {[1, 2, 3, 4, 5].map(num => (
-                  <option key={num} value={num}>성인 {num}명</option>
-                ))}
-                <option value="group">단체 (6명 이상)</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="pt-4 text-right">
-            <button
-              type="submit"
-              className="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-0.5 text-lg"
-            >
-              다음 단계로
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  };
-
-  const renderStep2 = () => (
-    <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-      <h2 className="text-2xl font-bold text-gray-800 mb-2 flex items-center">
-        <Clock className="mr-3 text-blue-600" /> 도착 시간을 알려주세요
-      </h2>
-      <p className="text-gray-500 mb-8">
-        입국 수속 및 수하물 수취 시간을 고려한 예상 공항 로비 도착 시간을 선택해 주세요. (보통 착륙 후 1시간 뒤)
-      </p>
-
-      <form onSubmit={handleStep2Submit} className="space-y-6">
-        <div className="flex justify-center">
-          <input
-            type="time"
-            value={arrivalTime}
-            onChange={(e) => setArrivalTime(e.target.value)}
-            className="text-5xl font-black text-center text-blue-900 bg-blue-50 border-none rounded-2xl py-6 px-4 focus:ring-4 focus:ring-blue-200 outline-none transition-all cursor-pointer"
-            required
-          />
-        </div>
-
-        <div
-          className={`p-5 rounded-xl border flex items-start ${
-            isTransitAvailable
-              ? 'bg-green-50 border-green-200 text-green-800'
-              : 'bg-orange-50 border-orange-200 text-orange-800'
-          }`}
-        >
-          {isTransitAvailable ? (
-            <Info className="w-6 h-6 mr-3 text-green-600 flex-shrink-0 mt-0.5" />
-          ) : (
-            <AlertTriangle className="w-6 h-6 mr-3 text-orange-600 flex-shrink-0 mt-0.5" />
-          )}
-          <div>
-            <h4 className="font-bold text-lg mb-1">
-              {isTransitAvailable
-                ? '대중교통 이용 가능 시간대입니다.'
-                : '대중교통 이용이 제한되는 심야/새벽 시간입니다.'}
-            </h4>
-            <p className="text-sm opacity-90 leading-relaxed">
-              {isTransitAvailable
-                ? '지하철(공항철도), 시내버스, 공항 리무진 등 대부분의 이동 수단을 자유롭게 선택하실 수 있습니다.'
-                : '정규 지하철 및 주간 버스 운행이 종료되었습니다. 심야 공항버스(N버스), 24시간 택시, 혹은 도보(인근 호텔) 이동을 권장합니다.'}
-            </p>
-          </div>
-        </div>
-
-        <div className="pt-6 flex gap-4">
-          <button
-            type="button" onClick={() => setStep(1)}
-            className="w-1/3 px-6 py-4 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors"
-          >
-            이전
-          </button>
-          <button
-            type="submit"
-            className="w-2/3 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all"
-          >
-            이동 수단 선택하기
-          </button>
-        </div>
-      </form>
+      <p className="text-xs text-blue-500 font-medium mt-1 italic">"{romanized}"</p>
     </div>
   );
+}
 
-  const renderStep3 = () => {
-    const transportOptions = [
-      { id: 'subway',    name: '지하철 / 공항철도', icon: Train,      type: 'public', desc: '정체 없이 정해진 시간에 가장 빠르게 도심 진입' },
-      { id: 'bus',       name: '시내버스',           icon: Bus,        type: 'public', desc: '비교적 저렴한 요금으로 주요 거점 이동' },
-      { id: 'limousine', name: '공항 리무진',         icon: Bus,        type: 'all',    desc: '편안한 좌석과 넉넉한 수하물 공간, 호텔 직행 노선' },
-      { id: 'taxi',      name: '택시 / 콜밴',         icon: Car,        type: 'all',    desc: '목적지까지 프라이빗하고 편안한 다이렉트 이동' },
-      { id: 'walk',      name: '도보 (인근 이동)',     icon: Footprints, type: 'all',    desc: '제1/2터미널 내 캡슐호텔 및 공항 인근 도보권 숙소 이동' },
-    ];
-
-    return (
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">도심으로 가는 방법을 선택해 주세요</h2>
-          <p className="text-gray-500 mt-2">
-            {schedule.airport} 기준, {arrivalTime}에 이용 가능한 추천 수단입니다.
-          </p>
+// ── Section Card ────────────────────────────────────────────────────────
+function Section({ icon, title, badge, badgeColor = 'blue', children, defaultOpen = false }: {
+  icon: React.ReactNode; title: string; badge?: string; badgeColor?: string;
+  children: React.ReactNode; defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const colorMap: Record<string, string> = {
+    blue: 'bg-blue-50 text-blue-700', red: 'bg-red-50 text-red-600',
+    green: 'bg-emerald-50 text-emerald-700', amber: 'bg-amber-50 text-amber-700',
+    purple: 'bg-purple-50 text-purple-700',
+  };
+  return (
+    <div className={`bg-white rounded-3xl border transition-all duration-300 overflow-hidden ${open ? 'shadow-xl border-slate-200' : 'shadow-sm border-slate-100 hover:border-blue-200'}`}>
+      <button onClick={() => setOpen(!open)} className="w-full px-6 py-5 flex items-center justify-between text-left gap-4">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-2xl bg-slate-50 flex items-center justify-center shrink-0">{icon}</div>
+          <div>
+            <h3 className="text-base font-black text-slate-900">{title}</h3>
+            {badge && <span className={`text-[10px] font-black px-2 py-0.5 rounded-full mt-0.5 inline-block ${colorMap[badgeColor]}`}>{badge}</span>}
+          </div>
         </div>
+        <ChevronDown size={18} className={`text-slate-300 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && <div className="px-6 pb-7 border-t border-slate-50 pt-5">{children}</div>}
+    </div>
+  );
+}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {transportOptions.map(option => {
-            const isDisabled = option.type === 'public' && !isTransitAvailable;
-            const Icon = option.icon;
+// ── Main App ────────────────────────────────────────────────────────────
+export default function App() {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [selectedId, setSelectedId] = useState('');
+  const [arrivalDate, setArrivalDate] = useState('2026-04-01');
+  const [arrivalTime, setArrivalTime] = useState('14:00');
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [stayDays, setStayDays] = useState(7);
+  const dateRef = useRef<HTMLInputElement>(null);
+
+  const airport = useMemo(() => AIRPORTS.find(a => a.id === selectedId), [selectedId]);
+  const totalPax = adults + children;
+  const exitTime = useMemo(() => addHour(arrivalTime, 1), [arrivalTime]);
+  const isNight = useMemo(() => { const h = +exitTime.split(':')[0]; return h >= 23 || h < 6; }, [exitTime]);
+  const season = useMemo(() => getSeason(arrivalDate), [arrivalDate]);
+  const dayInfo = useMemo(() => arrivalDate ? getDayLabel(arrivalDate) : null, [arrivalDate]);
+
+  const canProceed = selectedId && arrivalDate;
+
+  // ── STEP 1 ─────────────────────────────────────────────────────────
+  const renderStep1 = () => (
+    <div className="max-w-3xl mx-auto space-y-6">
+      {/* Hero */}
+      <div className="text-center py-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-xs font-black uppercase tracking-widest mb-4">
+          <Sparkles size={12} /> Korea Travel Guide · Free
+        </div>
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
+          Your Personalized<br />Korea Arrival Guide
+        </h1>
+        <p className="text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
+          Tell us how you arrive — we'll build a step-by-step guide tailored exactly to you.
+        </p>
+      </div>
+
+      {/* Card */}
+      <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-6 md:p-8">
+        <h2 className="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
+          <MapPin size={18} className="text-blue-600" /> Select Your Arrival Airport
+        </h2>
+
+        {/* Airport Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          {AIRPORTS.map(ap => {
+            const sel = selectedId === ap.id;
             return (
-              <button
-                key={option.id}
-                onClick={() => !isDisabled && handleTransportSelect(option.name)}
-                disabled={isDisabled}
-                className={`relative p-6 text-left rounded-2xl border-2 transition-all duration-200 flex flex-col h-full
-                  ${isDisabled
-                    ? 'bg-gray-50 border-gray-100 opacity-60 cursor-not-allowed'
-                    : 'bg-white border-transparent shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer'
-                  }`}
-              >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4
-                  ${isDisabled ? 'bg-gray-200 text-gray-400' : 'bg-blue-50 text-blue-600'}`}>
-                  <Icon size={24} />
-                </div>
-                <h3 className="text-lg font-bold text-gray-800 mb-2">{option.name}</h3>
-                <p className="text-sm text-gray-500 flex-grow">{option.desc}</p>
-                {isDisabled && (
-                  <div className="mt-4 text-xs font-semibold text-orange-500 bg-orange-50 inline-block px-2 py-1 rounded">
-                    현재 시간 운행 종료
+              <button key={ap.id} type="button" onClick={() => setSelectedId(ap.id)}
+                className={`relative text-left p-4 rounded-2xl border-2 transition-all duration-200
+                  ${sel ? 'border-blue-600 bg-blue-50 shadow-md shadow-blue-100' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white hover:shadow-md'}`}>
+                {sel && (
+                  <div className="absolute top-2.5 right-2.5 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                    <Check size={10} strokeWidth={3} className="text-white" />
                   </div>
                 )}
+                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full tracking-widest mb-1.5 inline-block
+                  ${sel ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                  {ap.code}{ap.terminal ? ` ${ap.terminal}` : ''}
+                </span>
+                <p className={`text-sm font-black leading-tight ${sel ? 'text-blue-900' : 'text-slate-800'}`}>{ap.nameEn}</p>
+                <p className={`text-[10px] font-medium mt-0.5 ${sel ? 'text-blue-400' : 'text-slate-400'}`}>{ap.region}</p>
+                {ap.is24h
+                  ? <p className="text-[9px] font-black text-emerald-600 mt-1">● 24h Open</p>
+                  : <p className="text-[9px] font-black text-red-400 mt-1">✕ Closed {ap.curfew}</p>}
               </button>
             );
           })}
         </div>
 
-        <div className="mt-8 text-center">
-          <button
-            onClick={() => setStep(2)}
-            className="text-gray-500 font-medium hover:text-gray-800 hover:underline"
-          >
-            ← 시간 다시 설정하기
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Arrival Date */}
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              <Calendar size={10} className="inline mr-1" /> Arrival Date
+            </label>
+            <div className="relative bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center cursor-pointer
+                            focus-within:ring-2 focus-within:ring-blue-500 transition-all"
+              onClick={() => dateRef.current?.showPicker()}>
+              <Calendar size={16} className="text-slate-400 mr-2.5 shrink-0" />
+              {dayInfo ? (
+                <span className={`text-sm font-bold ${dayInfo.isWeekend ? 'text-rose-600' : 'text-slate-900'}`}>
+                  {dayInfo.label}
+                </span>
+              ) : <span className="text-sm text-slate-400">Select date</span>}
+              <input ref={dateRef} type="date" value={arrivalDate}
+                onChange={e => setArrivalDate(e.target.value)} className="sr-only" />
+            </div>
+          </div>
+
+          {/* Arrival Time */}
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+              <Clock size={10} className="inline mr-1" /> Flight Landing Time
+            </label>
+            <div className="relative bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+              <Clock size={16} className="text-slate-400 mr-2.5 shrink-0" />
+              <input type="time" value={arrivalTime} onChange={e => setArrivalTime(e.target.value)}
+                className="bg-transparent outline-none font-bold text-slate-900 text-sm w-full cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          {/* Adults */}
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Adults</label>
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+              <button onClick={() => setAdults(Math.max(1, adults - 1))}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
+              <span className="flex-1 text-center font-black text-slate-900">{adults}</span>
+              <button onClick={() => setAdults(adults + 1)}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
+            </div>
+          </div>
+          {/* Children */}
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Children</label>
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+              <button onClick={() => setChildren(Math.max(0, children - 1))}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
+              <span className="flex-1 text-center font-black text-slate-900">{children}</span>
+              <button onClick={() => setChildren(children + 1)}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
+            </div>
+          </div>
+          {/* Stay */}
+          <div>
+            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Stay (days)</label>
+            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+              <button onClick={() => setStayDays(Math.max(1, stayDays - 1))}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
+              <span className="flex-1 text-center font-black text-slate-900">{stayDays}</span>
+              <button onClick={() => setStayDays(stayDays + 1)}
+                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => canProceed && setStep(2)}
+          disabled={!canProceed}
+          className={`w-full py-4 font-black text-base rounded-2xl transition-all duration-200 flex items-center justify-center gap-2
+            ${canProceed ? 'bg-slate-900 hover:bg-blue-600 text-white shadow-lg hover:-translate-y-0.5' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}>
+          {canProceed ? <>Build My Guide <ArrowRight size={18} /></> : 'Select an airport to continue'}
+        </button>
+      </div>
+    </div>
+  );
+
+  // ── STEP 2: Personalized Guide ──────────────────────────────────────
+  const renderStep2 = () => {
+    if (!airport) return null;
+    const seasonIcon = { Spring: <Flower2 size={20} className="text-pink-500" />, Summer: <Sun size={20} className="text-yellow-500" />, Autumn: <Leaf size={20} className="text-orange-500" />, Winter: <Snowflake size={20} className="text-sky-500" /> }[season];
+
+    return (
+      <div className="max-w-3xl mx-auto space-y-4">
+
+        {/* Personalized Header */}
+        <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-[2rem] p-6 md:p-8 text-white">
+          <div className="flex items-start justify-between flex-wrap gap-4 mb-5">
+            <div>
+              <p className="text-[10px] font-black text-blue-300 uppercase tracking-widest mb-1">Your Personalized Guide</p>
+              <h2 className="text-2xl font-black leading-tight">
+                {airport.nameEn} <span className="text-blue-300">({airport.code}{airport.terminal ? ' ' + airport.terminal : ''})</span>
+              </h2>
+              <p className="text-slate-400 text-sm font-semibold mt-1">{airport.region}</p>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-1.5 justify-end mb-1">
+                {seasonIcon}
+                <span className="font-black text-sm">{season}</span>
+              </div>
+              <p className="text-slate-400 text-xs font-semibold">{dayInfo?.label}</p>
+            </div>
+          </div>
+
+          {/* Smart Summary Pills */}
+          <div className="flex flex-wrap gap-2">
+            <span className={`px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 ${isNight ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
+              {isNight ? <Moon size={12} /> : <Sun size={12} />}
+              {isNight ? `Late-night arrival (exit ~${exitTime})` : `Daytime arrival (exit ~${exitTime})`}
+            </span>
+            <span className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-black flex items-center gap-1">
+              <Users size={12} /> {totalPax} {totalPax === 1 ? 'traveler' : 'travelers'}{children > 0 ? ` (${children} child${children > 1 ? 'ren' : ''})` : ''}
+            </span>
+            <span className="px-3 py-1.5 bg-white/10 rounded-full text-xs font-black flex items-center gap-1">
+              <Calendar size={12} /> {stayDays}-day stay
+            </span>
+          </div>
+
+          {/* Airport-specific alert */}
+          {airport.shuttleNote && (
+            <div className="mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3 flex items-start gap-2">
+              <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-xs font-bold text-amber-200">{airport.tip}</p>
+            </div>
+          )}
+          {!airport.shuttleNote && (
+            <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-2">
+              <Info size={14} className="text-blue-300 shrink-0 mt-0.5" />
+              <p className="text-xs font-bold text-slate-300">{airport.tip}</p>
+            </div>
+          )}
+        </div>
+
+        {/* ─ Section 1: Immigration & Customs ─ */}
+        <Section icon={<ShieldCheck size={20} className="text-blue-600" />} title="Immigration & Customs" badge="Step 1 · At the Airport" badgeColor="blue" defaultOpen>
+          <div className="space-y-4">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+              <h4 className="font-black text-red-700 text-sm mb-2 flex items-center gap-1.5"><AlertTriangle size={14} /> Before You Queue</h4>
+              <ul className="space-y-1.5 text-xs font-semibold text-red-800">
+                <li>• <strong>Remove hat, mask, glasses</strong> — face recognition at immigration kiosk</li>
+                <li>• <strong>No photos or video</strong> between landing and baggage claim — phones may be confiscated</li>
+                <li>• <strong>K-ETA required</strong> for most nationalities — must apply before departure at eta.go.kr</li>
+              </ul>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-blue-50 rounded-2xl p-4">
+                <h4 className="font-black text-blue-900 text-sm mb-2">🛂 Immigration Flow</h4>
+                <ol className="text-xs text-blue-800 font-semibold space-y-1">
+                  <li>1. Follow <strong>Arrivals (도착)</strong> signs</li>
+                  {airport.id === 'icn_t1' && <li>2. ⚠️ Take <strong>Shuttle Train</strong> (yellow signs)</li>}
+                  <li>{airport.id === 'icn_t1' ? '3' : '2'}. Use <strong>automated kiosk</strong> if eligible</li>
+                  <li>{airport.id === 'icn_t1' ? '4' : '3'}. Collect <strong>baggage</strong> on Level 1</li>
+                  <li>{airport.id === 'icn_t1' ? '5' : '4'}. <strong>Customs</strong> — declare if needed</li>
+                </ol>
+              </div>
+              <div className="bg-amber-50 rounded-2xl p-4">
+                <h4 className="font-black text-amber-900 text-sm mb-2">🧳 Customs — What to Declare</h4>
+                <ul className="text-xs text-amber-800 font-semibold space-y-1">
+                  <li>• Cash over <strong>$10,000 USD</strong></li>
+                  <li>• Duty-free goods over <strong>$800 USD</strong></li>
+                  <li>• Alcohol over <strong>1L</strong> or tobacco over <strong>200 cigarettes</strong></li>
+                  <li>• Food, plants, meat products</li>
+                </ul>
+              </div>
+            </div>
+            <div className="bg-slate-900 rounded-2xl p-4">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">📺 Video Guide — Incheon Immigration Walk-through</p>
+              <div className="space-y-2">
+                {[['0:00', 'Landing & deplaning tips'], ['1:15', 'Shuttle train to main terminal (T1 only)'], ['2:40', 'Immigration kiosk vs. officer lane'], ['4:10', 'Baggage claim & carousel tips'], ['5:30', 'Customs red vs. green lane']].map(([t, d]) => (
+                  <div key={t} className="flex gap-3 text-xs"><span className="font-black text-blue-400 tabular-nums shrink-0">{t}</span><span className="text-slate-300 font-semibold">{d}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 2: Smart Transport ─ */}
+        <Section icon={<Train size={20} className="text-emerald-600" />} title="Getting to the City" badge={isNight ? '⚠ Night Mode Active' : '✓ All Options Available'} badgeColor={isNight ? 'red' : 'green'} defaultOpen>
+          <div className="space-y-4">
+            {/* AI Recommendation */}
+            <div className="bg-slate-900 rounded-2xl p-5 text-white">
+              <div className="flex items-center gap-2 mb-3"><Sparkles size={14} className="text-amber-400" /><span className="text-xs font-black text-amber-400 uppercase tracking-widest">Best Option for You</span></div>
+              <div className="flex items-center gap-4">
+                <div className="text-4xl shrink-0">
+                  {totalPax >= 4 ? '🚐' : isNight ? '🚕' : airport.id.startsWith('icn') ? '🚆' : '🚌'}
+                </div>
+                <div>
+                  <h4 className="font-black text-lg">
+                    {totalPax >= 4 ? 'Private Airport Van' : isNight ? 'Night Bus / Taxi' : airport.id.startsWith('icn') ? 'AREX Express Train' : 'Airport Limousine Bus'}
+                  </h4>
+                  <p className="text-slate-400 text-sm font-semibold mt-1">
+                    {totalPax >= 4
+                      ? `${totalPax} people + luggage = van is cheaper & more comfortable than 2 taxis. Book on Klook.`
+                      : isNight
+                      ? `Exit at ~${exitTime}. Regular trains stopped. Use N-Bus or Kakao T app for taxi.`
+                      : airport.id.startsWith('icn')
+                      ? `Departs every 40 min from B1 (orange gates). ₩11,000 to Seoul Station in 43 min.`
+                      : `Direct bus to major hotels. Check airport bus counter on Arrival Level 1.`}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* All Options */}
+            <div className="grid grid-cols-1 gap-2">
+              {[
+                {
+                  icon: <Train size={16} />, name: 'AREX Express Train', color: 'blue',
+                  available: !isNight && airport.id.startsWith('icn'),
+                  price: '₩11,000', time: '43 min to Seoul Station',
+                  tip: 'B1 level, Orange gates. Buy at kiosk — card or cash. Runs 05:20–22:40.',
+                },
+                {
+                  icon: <Bus size={16} />, name: 'Airport Limousine Bus', color: 'green',
+                  available: !isNight,
+                  price: '₩16,000–25,000', time: '60–90 min depending on traffic',
+                  tip: 'Level 1, outside Arrivals. Buy at counter or machine. Goes direct to major hotel areas.',
+                },
+                {
+                  icon: <Car size={16} />, name: 'Kakao T Taxi', color: 'amber',
+                  available: true,
+                  price: `₩${airport.id.startsWith('icn') ? '60,000–90,000' : '15,000–40,000'}`, time: 'Door to door',
+                  tip: 'Download Kakao T app. Set pickup to "Arrivals Exit." Black Taxi = premium, no price gouging.',
+                },
+                {
+                  icon: <Car size={16} />, name: 'Private Van (Klook/Viator)', color: 'purple',
+                  available: totalPax >= 3,
+                  price: '₩80,000–150,000 total', time: 'Door to door',
+                  tip: `Best for ${totalPax >= 4 ? 'your group' : 'groups of 3+'}. Pre-book online. Driver meets you at arrivals.`,
+                },
+              ].map(opt => (
+                <div key={opt.name} className={`rounded-2xl p-4 border-2 ${!opt.available ? 'opacity-40 border-slate-100 bg-slate-50' : 'border-slate-100 bg-white'}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 font-black text-slate-900 text-sm">{opt.icon} {opt.name}</div>
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${!opt.available ? 'bg-slate-100 text-slate-400' : 'bg-emerald-50 text-emerald-700'}`}>
+                      {!opt.available ? 'Not available now' : 'Available'}
+                    </span>
+                  </div>
+                  <div className="flex gap-4 text-xs text-slate-500 font-semibold mb-2">
+                    <span>💰 {opt.price}</span><span>⏱ {opt.time}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium">{opt.tip}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 3: First Hour Checklist ─ */}
+        <Section icon={<CheckCircle size={20} className="text-amber-500" />} title="First Hour Checklist" badge="Do This Before Leaving the Airport" badgeColor="amber">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
+                <h4 className="font-black text-purple-900 text-sm mb-3 flex items-center gap-2"><Smartphone size={14} /> SIM / Data</h4>
+                <div className="space-y-2 text-xs text-purple-800 font-semibold">
+                  <p>✅ <strong>Best: eSIM</strong> — buy before departure (Airalo, Ubigi). Activates on landing.</p>
+                  <p>✅ <strong>Physical SIM:</strong> Available at CU convenience store inside arrivals. KT/SK/LG.</p>
+                  <p>❌ <strong>Avoid:</strong> Roaming from your home country — very expensive.</p>
+                </div>
+              </div>
+              <div className="bg-green-50 rounded-2xl p-4 border border-green-100">
+                <h4 className="font-black text-green-900 text-sm mb-3 flex items-center gap-2"><CreditCard size={14} /> Money & Cards</h4>
+                <div className="space-y-2 text-xs text-green-800 font-semibold">
+                  <p>💡 Exchange only <strong>50,000–100,000 won</strong> at airport (bad rates).</p>
+                  <p>✅ Get a <strong>T-money card</strong> at convenience store (₩2,500). Tap for all transit.</p>
+                  <p>✅ Best rates: <strong>Myeongdong</strong> money changers or WOWPASS kiosk at subway.</p>
+                  <p>✅ Visa/Mastercard accepted almost everywhere in Seoul.</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-slate-50 rounded-2xl p-4">
+              <h4 className="font-black text-slate-800 text-sm mb-3">📱 Essential Apps — Download Now</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  ['Naver Maps', 'Best for navigation in Korea'],
+                  ['Kakao T', 'Taxi booking — fair prices'],
+                  ['Papago', 'Naver translator — works offline'],
+                  ['Coupang Eats', 'Food delivery to your accommodation'],
+                ].map(([app, desc]) => (
+                  <div key={app} className="bg-white rounded-xl p-3 border border-slate-100">
+                    <p className="font-black text-slate-900 text-xs">{app}</p>
+                    <p className="text-[10px] text-slate-400 font-medium mt-0.5">{desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 4: Culture & Etiquette ─ */}
+        <Section icon={<Heart size={20} className="text-rose-500" />} title="Korean Culture Survival Guide" badge="Avoid Embarrassment" badgeColor="red">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { emoji: '🚫', title: 'No Tipping', body: 'Tipping is NOT done in Korea — not at restaurants, hotels, or taxis. Offering a tip can feel rude.' },
+                { emoji: '👟', title: 'Shoes Off Indoors', body: 'Remove shoes when entering homes, guesthouses, and some traditional restaurants (look for raised floor).' },
+                { emoji: '🤫', title: 'Quiet in Public', body: 'Keep phone calls short and voices low on public transit. Priority seats (pink) are strictly for elderly.' },
+                { emoji: '🍺', title: 'Drinking Etiquette', body: 'Pour drinks for others, not yourself. Accept with two hands. Say "Geonbae!" (건배) for cheers.' },
+                { emoji: '👴', title: 'Respect Elders', body: 'Bow slightly when greeting older people. Let elderly passengers board first.' },
+                { emoji: '🗑️', title: 'Trash Rules', body: 'Buy designated bags at convenience stores (종량제 봉투). Separate food waste. Fines for violations.' },
+              ].map(item => (
+                <div key={item.title} className="bg-white border border-slate-100 rounded-2xl p-4">
+                  <p className="text-2xl mb-2">{item.emoji}</p>
+                  <h4 className="font-black text-slate-900 text-sm mb-1">{item.title}</h4>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 5: Season Guide ─ */}
+        <Section icon={seasonIcon} title={`${season} in Korea — What to Know`} badge={`Arrival: ${dayInfo?.label ?? ''}`} badgeColor="purple">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">🌡️ Weather & Clothing</h4>
+                <p className="text-xs text-slate-600 font-semibold leading-relaxed">
+                  {season === 'Spring' && 'Avg 10–18°C. Temperature swings daily — layers essential. High fine dust (미세먼지) in March–April. Bring or buy a KF94 mask.'}
+                  {season === 'Summer' && 'Avg 25–35°C with high humidity. Rainy season (장마) June–July. Carry a compact umbrella daily. Light, breathable clothing only.'}
+                  {season === 'Autumn' && 'Avg 12–22°C. Best weather of the year. Light jacket for evenings. Peak foliage late October — book accommodation early.'}
+                  {season === 'Winter' && 'Avg -5–5°C. Wind makes it feel colder. Long down parka + heattech base layer essential. Ondol (floor heating) in traditional stays.'}
+                </p>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">📅 {season} Events</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  {season === 'Spring' && <>
+                    <li>🌸 Cherry blossom festival (late March–April)</li>
+                    <li>🎡 Jinhae Gunhangje Festival</li>
+                    <li>🌷 Yeouido Spring Flower Festival</li>
+                  </>}
+                  {season === 'Summer' && <>
+                    <li>🎵 Boryeong Mud Festival (July)</li>
+                    <li>🌊 Busan International Film Festival (October prep)</li>
+                    <li>🏖️ Beach season on Haeundae</li>
+                  </>}
+                  {season === 'Autumn' && <>
+                    <li>🍁 Naejangsan foliage hiking (October)</li>
+                    <li>🎬 Busan International Film Festival</li>
+                    <li>🏛️ Seoul Lantern Festival (November)</li>
+                  </>}
+                  {season === 'Winter' && <>
+                    <li>⛷️ Ski resorts open (December–February)</li>
+                    <li>🎆 New Year sunrise events at Jeongdongjin</li>
+                    <li>🏮 Hwacheon Sancheoneo Ice Festival</li>
+                  </>}
+                </ul>
+              </div>
+            </div>
+            <div className="bg-slate-900 rounded-2xl p-4">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">📺 {season} Korea Travel Tips</p>
+              <div className="space-y-2">
+                {(season === 'Spring'
+                  ? [['0:00','Cherry blossom spots ranking'],['1:30','Fine dust: KF94 vs KF80 masks'],['3:00','Best cherry blossom locations'],['4:45','Spring clothing packing list']]
+                  : season === 'Summer'
+                  ? [['0:00','Rainy season survival tips'],['1:20','Best beaches near Seoul'],['2:45','Air conditioning culture'],['4:00','Must-try summer foods']]
+                  : season === 'Autumn'
+                  ? [['0:00','Top foliage hiking trails'],['1:45','Autumn festival guide'],['3:10','Photography spots'],['4:30','Jacket packing tips']]
+                  : [['0:00','Winter clothing essentials'],['1:30','Ski resort guide'],['3:00','Ondol & staying warm'],['4:15','Winter street food']]
+                ).map(([t, d]) => (
+                  <div key={t} className="flex gap-3 text-xs"><span className="font-black text-blue-400 tabular-nums shrink-0">{t}</span><span className="text-slate-300 font-semibold">{d}</span></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 6: Food Guide ─ */}
+        <Section icon={<Utensils size={20} className="text-orange-500" />} title="Korean Food Guide" badge="What, How & Where to Eat" badgeColor="amber">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-3">
+              {[
+                { name: '삼겹살 Samgyeopsal', type: 'Pork BBQ', heat: '🌶 None', price: '₩12,000–18,000/person', desc: 'Grilled pork belly at the table. Cook it yourself on the grill. Wrap in lettuce with garlic & sauce.' },
+                { name: '비빔밥 Bibimbap', type: 'Mixed Rice', heat: '🌶 Mild', price: '₩8,000–12,000', desc: 'Rice, veggies, egg, gochujang sauce. Mix everything together. Safe for most diets.' },
+                { name: '순두부찌개 Sundubu Jjigae', type: 'Soft Tofu Stew', heat: '🌶🌶 Medium', price: '₩8,000–12,000', desc: 'Silky tofu in spicy broth. Comes with rice and small side dishes (banchan) — those are free refills!' },
+                { name: '떡볶이 Tteokbokki', type: 'Street Food', heat: '🌶🌶🌶 Hot', price: '₩3,000–5,000', desc: 'Chewy rice cakes in sweet-spicy sauce. Most iconic Korean street food. Find at pojangmacha stalls.' },
+              ].map(f => (
+                <div key={f.name} className="bg-white border border-slate-100 rounded-2xl p-4">
+                  <div className="flex items-start justify-between mb-1">
+                    <h4 className="font-black text-slate-900 text-sm">{f.name}</h4>
+                    <span className="text-xs font-bold text-slate-400 ml-2 shrink-0">{f.price}</span>
+                  </div>
+                  <div className="flex gap-2 mb-2">
+                    <span className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full">{f.type}</span>
+                    <span className="text-[10px] font-black bg-red-50 text-red-500 px-2 py-0.5 rounded-full">{f.heat}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{f.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="bg-blue-50 rounded-2xl p-4">
+              <h4 className="font-black text-blue-900 text-sm mb-3">🗣️ Useful Phrases for Restaurants</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <PhraseCard en="I'm allergic to peanuts" ko="땅콩 알레르기가 있어요" romanized="Ttangkong allereugi ga isseoyo" />
+                <PhraseCard en="Not spicy please" ko="안 맵게 해주세요" romanized="An maepge haejuseyo" />
+                <PhraseCard en="The bill please" ko="계산서 주세요" romanized="Gyesanseo juseyo" />
+                <PhraseCard en="Delicious!" ko="맛있어요!" romanized="Masisseoyo!" />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 7: Getting Around Korea ─ */}
+        <Section icon={<Globe size={20} className="text-indigo-500" />} title="Getting Around Korea" badge="Subway · Bus · KTX · Taxi" badgeColor="purple">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2 flex items-center gap-2"><Train size={14} /> Subway (지하철)</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>✅ Most reliable city transport</li>
+                  <li>✅ All signs in English + color-coded</li>
+                  <li>✅ Tap T-money card to enter/exit</li>
+                  <li>💰 Base fare ~₩1,400 per ride</li>
+                  <li>📱 Use <strong>Naver Maps</strong> or <strong>Subway Korea</strong> app</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2 flex items-center gap-2"><Car size={14} /> Taxi Tips</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>✅ Use <strong>Kakao T</strong> app — fair metered prices</li>
+                  <li>✅ Show address in Korean on your phone</li>
+                  <li>⚠️ Late night surcharge +20%</li>
+                  <li>⚠️ Always ask for a receipt (영수증)</li>
+                  <li>❌ Never enter unmarked taxis</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">🚄 KTX (High Speed Train)</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>✅ Seoul → Busan in 2h 15min</li>
+                  <li>✅ Book at <strong>Korail.com</strong> (foreigners get discounts)</li>
+                  <li>💰 Seoul–Busan from ₩59,800</li>
+                  <li>📍 Departs from Seoul Station or Suseo</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">🚌 Intercity Bus</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>✅ Cheaper than KTX</li>
+                  <li>✅ Reaches more cities</li>
+                  <li>📱 Book via <strong>Kobus.co.kr</strong></li>
+                  <li>📍 Departs from Express Bus Terminal (강남구)</li>
+                </ul>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+              <h4 className="font-black text-amber-900 text-sm mb-2">🗣️ Show This to Your Driver</h4>
+              <PhraseCard en="Please take me to this address" ko="이 주소로 가주세요" romanized="I jusoro gajuseyo" />
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 8: Emergency Kit ─ */}
+        <Section icon={<PhoneCall size={20} className="text-red-500" />} title="Emergency & SOS Guide" badge="Save These Numbers" badgeColor="red">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { num: '119', label: 'Ambulance / Fire', desc: 'Medical emergency or fire. English operator available.' },
+                { num: '112', label: 'Police', desc: 'Crime or safety emergency. English support via interpretation.' },
+                { num: '1330', label: 'Tourism Hotline', desc: '24/7 FREE multilingual support. Lost items, translator, directions.' },
+              ].map(e => (
+                <div key={e.num} className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
+                  <p className="text-3xl font-black text-red-600 mb-1">{e.num}</p>
+                  <p className="font-black text-red-900 text-sm mb-1">{e.label}</p>
+                  <p className="text-xs text-red-700 font-medium">{e.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">🏥 Medical Emergency</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>✅ Most large hospitals have <strong>International Clinics</strong> with English staff</li>
+                  <li>✅ Samsung Seoul Hospital, Severance, Asan — top choices</li>
+                  <li>✅ 24h Pharmacy: search <strong>Pharm114.or.kr</strong></li>
+                  <li>💡 Bring your travel insurance documents</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-slate-100 rounded-2xl p-4">
+                <h4 className="font-black text-slate-900 text-sm mb-2">📦 Lost Items</h4>
+                <ul className="text-xs text-slate-600 font-semibold space-y-1">
+                  <li>🚕 Taxi: call <strong>1330</strong> with receipt number</li>
+                  <li>🚇 Subway: visit station office or call <strong>1577-1234</strong></li>
+                  <li>🌐 Online: <strong>lost112.go.kr</strong> — police lost & found</li>
+                  <li>💡 Always photograph your taxi receipt</li>
+                </ul>
+              </div>
+            </div>
+            <div className="bg-slate-900 rounded-2xl p-4">
+              <h4 className="font-black text-white text-sm mb-3">🗣️ Emergency Phrases — Show Your Phone</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <PhraseCard en="I need an ambulance" ko="구급차가 필요해요" romanized="Gugeupchaga piryohaeyo" />
+                <PhraseCard en="Please call the police" ko="경찰을 불러주세요" romanized="Gyeongchal-eul bulleojuseyo" />
+                <PhraseCard en="I lost my passport" ko="여권을 잃어버렸어요" romanized="Yeokwon-eul ireoboryeosseoyo" />
+                <PhraseCard en="I need a doctor" ko="의사가 필요해요" romanized="Uisa-ga piryohaeyo" />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ─ Section 9: WiFi & Connectivity ─ */}
+        <Section icon={<Wifi size={20} className="text-sky-500" />} title="Stay Connected" badge="SIM · WiFi · Internet" badgeColor="blue">
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { title: 'eSIM (Recommended)', emoji: '📲', desc: 'Buy before leaving home via Airalo or Ubigi. Activate on landing. No physical card needed. From $8/week.' },
+                { title: 'Tourist SIM', emoji: '📦', desc: 'Buy at airport CU store or Pocket WiFi counter. KT, SK, LG. Unlimited data from ₩15,000/week.' },
+                { title: 'Pocket WiFi', emoji: '📡', desc: 'Rent at airport. Shares with your group. Return at departure. Good for 4+ people. ~₩6,000/day.' },
+              ].map(c => (
+                <div key={c.title} className="bg-sky-50 border border-sky-100 rounded-2xl p-4">
+                  <p className="text-2xl mb-2">{c.emoji}</p>
+                  <h4 className="font-black text-sky-900 text-sm mb-1">{c.title}</h4>
+                  <p className="text-xs text-sky-800 font-medium leading-relaxed">{c.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+              <p className="text-xs font-black text-emerald-800">💡 Korea has free WiFi almost everywhere: subway, cafes, McDonald's, convenience stores, and most tourist spots. You can survive short periods without data!</p>
+            </div>
+          </div>
+        </Section>
+
+        {/* Bottom Actions */}
+        <div className="flex gap-3 pt-2 pb-8">
+          <button onClick={() => setStep(1)}
+            className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 font-black rounded-2xl hover:bg-slate-50 transition-all">
+            ← Change Details
+          </button>
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex-1 py-4 bg-slate-900 text-white font-black rounded-2xl hover:bg-blue-600 transition-all">
+            Back to Top ↑
           </button>
         </div>
       </div>
     );
   };
 
-  const renderStep4 = () => {
-    const getGuideContent = () => {
-      if (transport.includes('지하철')) {
-        return (
-          <ul className="space-y-4 text-gray-700 leading-relaxed">
-            <li><strong>탑승 위치:</strong> 공항 터미널 지하 1층 '교통센터(Transportation Center)'로 이동하세요. 노란색 안내 표지판을 따라가시면 됩니다.</li>
-            <li><strong>티켓 구매:</strong> 교통센터 내 무인 발권기 또는 편의점에서 교통카드(Tmoney 등)를 구매 및 충전할 수 있습니다. 직통열차의 경우 전용 창구를 이용하세요.</li>
-            <li><strong>주의 사항:</strong> 출퇴근 시간대(07:30~09:00, 18:00~19:30)에는 탑승객이 많아 수하물이 클 경우 불편할 수 있습니다.</li>
-            <li><strong>도착지 연계:</strong> 서울역, 홍대입구역 등 주요 환승역에서 시내 지하철 노선으로 쉽게 환승 가능합니다.</li>
-          </ul>
-        );
-      } else if (transport.includes('리무진')) {
-        return (
-          <ul className="space-y-4 text-gray-700 leading-relaxed">
-            <li><strong>탑승 위치:</strong> 1층 입국장 외부(게이트 3~7번 사이)에 위치한 리무진 버스 정류장으로 이동하세요.</li>
-            <li><strong>티켓 구매:</strong> 입국장 내부 버스 매표소, 외부 무인 발권기, 또는 모바일 앱(티머니 GO)을 통해 좌석을 지정하여 구매합니다.</li>
-            <li><strong>수하물 처리:</strong> 탑승 전 승무원이 수하물 칸에 짐을 실어주며, 짐표(Baggage Tag)를 발급해 줍니다. 하차 시 꼭 짐표를 확인하세요.</li>
-            <li><strong>심야 이용:</strong> 심야 시간대(N버스)의 경우 특정 정류장에서만 정차하므로 사전 노선 확인이 필수입니다.</li>
-          </ul>
-        );
-      } else if (transport.includes('버스')) {
-        return (
-          <ul className="space-y-4 text-gray-700 leading-relaxed">
-            <li><strong>탑승 위치:</strong> 1층 입국장 외부 시내버스 승강장번호를 확인 후 이동하세요. (서울/경기/인천 노선별 위치 상이)</li>
-            <li><strong>이용 요금:</strong> 일반 교통카드 또는 현금으로 이용 가능합니다. (거리 비례제 적용 가능)</li>
-            <li><strong>장점:</strong> 목적지 근처의 세부 정류장까지 저렴하게 이동할 수 있습니다.</li>
-            <li><strong>참고:</strong> 큰 수하물의 경우 차내 반입이 제한될 수 있으므로 리무진 버스 이용을 권장합니다.</li>
-          </ul>
-        );
-      } else if (transport.includes('택시')) {
-        return (
-          <ul className="space-y-4 text-gray-700 leading-relaxed">
-            <li><strong>탑승 위치:</strong> 1층 입국장 외부 택시 승강장(일반/모범/대형 택시 분리 운영)에서 줄을 서서 대기합니다.</li>
-            <li><strong>요금 안내:</strong> 도심까지 이동 시 지역에 따라 시외 할증이 붙을 수 있으며, 톨게이트 비용은 승객이 별도로 지불합니다. (미터기 요금 외 추가됨)</li>
-            <li><strong>스마트폰 호출:</strong> 우버(UBER), 카카오T 등 모바일 앱을 이용할 경우, 앱 전용 탑승 구역(보통 외부 주차장 쪽)을 확인하세요.</li>
-          </ul>
-        );
-      } else {
-        return (
-          <ul className="space-y-4 text-gray-700 leading-relaxed">
-            <li><strong>도보 이동 가이드:</strong> 공항 내 환승 호텔이나 캡슐 호텔(다락휴 등)로 이동하시는 경우 표지판을 참조하세요.</li>
-            <li><strong>외부 도보 이동:</strong> 공항 외부로의 도보 이동은 보행자 도로가 제한적일 수 있으므로 공항 내 무료 순환 셔틀버스 이용을 권장합니다.</li>
-          </ul>
-        );
-      }
-    };
-
-    return (
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-        <div className="bg-blue-600 p-8 text-white">
-          <div className="inline-block px-3 py-1 bg-blue-500 text-blue-100 rounded-full text-sm font-semibold mb-4">
-            맞춤형 이동 가이드
-          </div>
-          <h2 className="text-3xl font-bold mb-2">{schedule.airport}에서 도심으로</h2>
-          <p className="text-blue-100 text-lg">
-            {schedule.departureDate} 도착 • {arrivalTime} 기준 • {transport} 이용
-          </p>
-        </div>
-
-        <div className="p-8">
-          <h3 className="text-xl font-bold text-gray-900 border-b pb-3 mb-5">상세 이용 안내</h3>
-
-          <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8">
-            {getGuideContent()}
-          </div>
-
-          <div className="bg-blue-50 border border-blue-100 p-5 rounded-xl flex items-start gap-4 mb-8">
-            <Info className="w-6 h-6 text-blue-600 flex-shrink-0" />
-            <p className="text-sm text-blue-800 leading-relaxed">
-              <strong>Tip:</strong> 공항 상황(날씨, 요일, 특별 행사 등)에 따라 실제 운행 시간표와 대기 시간이 달라질 수 있습니다.
-              이동 전 각 교통수단의 공식 앱이나 안내 데스크를 통해 한 번 더 확인하시는 것이 좋습니다.
-            </p>
-          </div>
-
-          <div className="flex justify-center border-t pt-8">
-            <button
-              onClick={() => { setStep(1); setTransport(''); }}
-              className="px-8 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-colors shadow-md"
-            >
-              처음부터 다시 계획하기
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
+  // ── RENDER ──────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div
-            className="flex items-center text-blue-600 font-black text-2xl tracking-tight cursor-pointer"
-            onClick={() => setStep(1)}
-          >
-            <PlaneLanding className="mr-2" size={28} />
-            CityTransit Guide
-          </div>
-          <nav className="hidden md:flex space-x-6 text-sm font-semibold text-gray-600">
-            <a href="#" className="hover:text-blue-600 transition-colors">공항별 정보</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">수하물 배송</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">고객센터</a>
-          </nav>
+    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
+      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto px-6 h-14 flex items-center justify-between">
+          <button onClick={() => setStep(1)} className="flex items-center gap-2 font-black text-slate-900 text-base tracking-tight hover:text-blue-600 transition-colors">
+            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
+              <PlaneLanding size={14} className="text-white" />
+            </div>
+            Korea OSO Guide
+          </button>
+          {step === 2 && airport && (
+            <div className="flex items-center gap-2 text-xs font-black text-slate-400">
+              <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">{airport.code}{airport.terminal ? ' ' + airport.terminal : ''}</span>
+              <span>{season}</span>
+              {isNight && <span className="bg-rose-50 text-rose-500 px-2.5 py-1 rounded-full flex items-center gap-1"><Moon size={10} /> Night</span>}
+            </div>
+          )}
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        {renderProgressBar()}
-        <div className="mt-8">
-          {step === 1 && renderStep1()}
-          {step === 2 && renderStep2()}
-          {step === 3 && renderStep3()}
-          {step === 4 && renderStep4()}
-        </div>
+      <main className="container mx-auto px-4 py-6 max-w-3xl">
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
       </main>
     </div>
   );
