@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   PlaneLanding, MapPin, Calendar, Users, Clock, ChevronDown, Check,
   AlertTriangle, Info, Train, Car, Bus, Smartphone, CreditCard,
   Utensils, ShieldCheck, PhoneCall, Heart, Sparkles, Copy, CheckCircle,
-  Moon, Sun, Snowflake, Leaf, Flower2, ArrowRight, Globe, Wifi,
+  Moon, Sun, Snowflake, Leaf, Flower2, ArrowRight, Globe, Wifi, Plane,
 } from 'lucide-react';
+
+export const runtime = 'edge';
 
 // ── Types ──────────────────────────────────────────────────────────────
 interface Airport {
@@ -42,6 +45,7 @@ function addHour(time: string, h = 1): string {
 function getDayLabel(dateStr: string): { label: string; isWeekend: boolean } {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const parts = dateStr.split('-');
+  if (parts.length !== 3) return { label: dateStr, isWeekend: false };
   const d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
   if (isNaN(d.getTime())) return { label: dateStr, isWeekend: false };
   const isWeekend = d.getDay() === 0 || d.getDay() === 6;
@@ -113,8 +117,9 @@ function Section({ icon, title, badge, badgeColor = 'blue', children, defaultOpe
   );
 }
 
-// ── Main App ────────────────────────────────────────────────────────────
-export default function App() {
+// ── Main Content Component ──
+function MainAppContent() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedId, setSelectedId] = useState('');
   const [arrivalDate, setArrivalDate] = useState('2026-04-01');
@@ -123,6 +128,34 @@ export default function App() {
   const [children, setChildren] = useState(0);
   const [stayDays, setStayDays] = useState(7);
   const dateRef = useRef<HTMLInputElement>(null);
+
+  // Parse URL Parameters on Load
+  useEffect(() => {
+    const airportParam = searchParams.get('airport');
+    const dateParam = searchParams.get('departureDate');
+    const paxParam = searchParams.get('passengers');
+
+    if (airportParam) {
+      const cleanParam = airportParam.toUpperCase();
+      const match = AIRPORTS.find(a => 
+        cleanParam.includes(a.code) || 
+        cleanParam.includes(a.nameEn.toUpperCase()) ||
+        cleanParam.includes(a.nameKo)
+      );
+      if (match) setSelectedId(match.id);
+    }
+
+    if (dateParam) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+        setArrivalDate(dateParam);
+      }
+    }
+
+    if (paxParam) {
+      const p = parseInt(paxParam);
+      if (!isNaN(p) && p > 0) setAdults(p);
+    }
+  }, [searchParams]);
 
   const airport = useMemo(() => AIRPORTS.find(a => a.id === selectedId), [selectedId]);
   const totalPax = adults + children;
@@ -136,10 +169,9 @@ export default function App() {
   // ── STEP 1 ─────────────────────────────────────────────────────────
   const renderStep1 = () => (
     <div className="max-w-3xl mx-auto space-y-6">
-      {/* Hero */}
       <div className="text-center py-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-xs font-black uppercase tracking-widest mb-4">
-          <Sparkles size={12} /> Korea Travel Guide · Free
+          <Sparkles size={12} /> Korea Travel Guide 2026
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
           Your Personalized<br />Korea Arrival Guide
@@ -149,13 +181,11 @@ export default function App() {
         </p>
       </div>
 
-      {/* Card */}
       <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-6 md:p-8">
         <h2 className="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
           <MapPin size={18} className="text-blue-600" /> Select Your Arrival Airport
         </h2>
 
-        {/* Airport Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           {AIRPORTS.map(ap => {
             const sel = selectedId === ap.id;
@@ -183,7 +213,6 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          {/* Arrival Date */}
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
               <Calendar size={10} className="inline mr-1" /> Arrival Date
@@ -202,7 +231,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Arrival Time */}
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
               <Clock size={10} className="inline mr-1" /> Flight Landing Time
@@ -216,7 +244,6 @@ export default function App() {
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
-          {/* Adults */}
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Adults</label>
             <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
@@ -227,7 +254,6 @@ export default function App() {
                 className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
             </div>
           </div>
-          {/* Children */}
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Children</label>
             <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
@@ -238,7 +264,6 @@ export default function App() {
                 className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
             </div>
           </div>
-          {/* Stay */}
           <div>
             <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Stay (days)</label>
             <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
@@ -265,12 +290,10 @@ export default function App() {
   // ── STEP 2: Personalized Guide ──────────────────────────────────────
   const renderStep2 = () => {
     if (!airport) return null;
-    const seasonIcon = { Spring: <Flower2 size={20} className="text-pink-500" />, Summer: <Sun size={20} className="text-yellow-500" />, Autumn: <Leaf size={20} className="text-orange-500" />, Winter: <Snowflake size={20} className="text-sky-500" /> }[season];
+    const seasonIcon = { Spring: <Flower2 size={20} className="text-pink-500" />, Summer: <Sun size={20} className="text-yellow-500" />, Autumn: <Leaf size={20} className="text-orange-500" />, Winter: <Snowflake size={20} className="text-sky-500" /> }[season as 'Spring' | 'Summer' | 'Autumn' | 'Winter'];
 
     return (
       <div className="max-w-3xl mx-auto space-y-4">
-
-        {/* Personalized Header */}
         <div className="bg-gradient-to-br from-slate-900 to-blue-900 rounded-[2rem] p-6 md:p-8 text-white">
           <div className="flex items-start justify-between flex-wrap gap-4 mb-5">
             <div>
@@ -289,7 +312,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Smart Summary Pills */}
           <div className="flex flex-wrap gap-2">
             <span className={`px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 ${isNight ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
               {isNight ? <Moon size={12} /> : <Sun size={12} />}
@@ -303,412 +325,36 @@ export default function App() {
             </span>
           </div>
 
-          {/* Airport-specific alert */}
-          {airport.shuttleNote && (
-            <div className="mt-4 bg-amber-500/20 border border-amber-500/30 rounded-xl p-3 flex items-start gap-2">
-              <AlertTriangle size={14} className="text-amber-400 shrink-0 mt-0.5" />
-              <p className="text-xs font-bold text-amber-200">{airport.tip}</p>
-            </div>
-          )}
-          {!airport.shuttleNote && (
-            <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-2">
-              <Info size={14} className="text-blue-300 shrink-0 mt-0.5" />
-              <p className="text-xs font-bold text-slate-300">{airport.tip}</p>
-            </div>
-          )}
+          <div className="mt-4 bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-2">
+            <Info size={14} className="text-blue-300 shrink-0 mt-0.5" />
+            <p className="text-xs font-bold text-slate-300">{airport.tip}</p>
+          </div>
         </div>
 
-        {/* ─ Section 1: Immigration & Customs ─ */}
         <Section icon={<ShieldCheck size={20} className="text-blue-600" />} title="Immigration & Customs" badge="Step 1 · At the Airport" badgeColor="blue" defaultOpen>
-          <div className="space-y-4">
+          <div className="space-y-4 text-xs font-medium text-slate-600 leading-relaxed">
             <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-              <h4 className="font-black text-red-700 text-sm mb-2 flex items-center gap-1.5"><AlertTriangle size={14} /> Before You Queue</h4>
-              <ul className="space-y-1.5 text-xs font-semibold text-red-800">
-                <li>• <strong>Remove hat, mask, glasses</strong> — face recognition at immigration kiosk</li>
-                <li>• <strong>No photos or video</strong> between landing and baggage claim — phones may be confiscated</li>
-                <li>• <strong>K-ETA required</strong> for most nationalities — must apply before departure at eta.go.kr</li>
-              </ul>
+              <h4 className="font-black text-red-700 text-sm mb-2 flex items-center gap-1.5"><AlertTriangle size={14} /> Security Notice</h4>
+              <p>Photography is strictly prohibited in the security area. Remove hats and masks for face recognition.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-blue-50 rounded-2xl p-4">
-                <h4 className="font-black text-blue-900 text-sm mb-2">🛂 Immigration Flow</h4>
-                <ol className="text-xs text-blue-800 font-semibold space-y-1">
-                  <li>1. Follow <strong>Arrivals (도착)</strong> signs</li>
-                  {airport.id === 'icn_t1' && <li>2. ⚠️ Take <strong>Shuttle Train</strong> (yellow signs)</li>}
-                  <li>{airport.id === 'icn_t1' ? '3' : '2'}. Use <strong>automated kiosk</strong> if eligible</li>
-                  <li>{airport.id === 'icn_t1' ? '4' : '3'}. Collect <strong>baggage</strong> on Level 1</li>
-                  <li>{airport.id === 'icn_t1' ? '5' : '4'}. <strong>Customs</strong> — declare if needed</li>
-                </ol>
-              </div>
-              <div className="bg-amber-50 rounded-2xl p-4">
-                <h4 className="font-black text-amber-900 text-sm mb-2">🧳 Customs — What to Declare</h4>
-                <ul className="text-xs text-amber-800 font-semibold space-y-1">
-                  <li>• Cash over <strong>$10,000 USD</strong></li>
-                  <li>• Duty-free goods over <strong>$800 USD</strong></li>
-                  <li>• Alcohol over <strong>1L</strong> or tobacco over <strong>200 cigarettes</strong></li>
-                  <li>• Food, plants, meat products</li>
-                </ul>
-              </div>
-            </div>
-            <div className="bg-slate-900 rounded-2xl p-4">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">📺 Video Guide — Incheon Immigration Walk-through</p>
-              <div className="space-y-2">
-                {[['0:00', 'Landing & deplaning tips'], ['1:15', 'Shuttle train to main terminal (T1 only)'], ['2:40', 'Immigration kiosk vs. officer lane'], ['4:10', 'Baggage claim & carousel tips'], ['5:30', 'Customs red vs. green lane']].map(([t, d]) => (
-                  <div key={t} className="flex gap-3 text-xs"><span className="font-black text-blue-400 tabular-nums shrink-0">{t}</span><span className="text-slate-300 font-semibold">{d}</span></div>
-                ))}
-              </div>
-            </div>
+            <p>1. Follow the <strong>Arrivals</strong> signs. If you are in ICN T1 on a foreign airline, you must take the shuttle train first.</p>
+            <p>2. Have your <strong>K-ETA</strong> or Visa ready. You can present it on your mobile phone.</p>
+            <p>3. Use the automated gates if you have registered for SES (Smart Entry Service).</p>
           </div>
         </Section>
 
-        {/* ─ Section 2: Smart Transport ─ */}
-        <Section icon={<Train size={20} className="text-emerald-600" />} title="Getting to the City" badge={isNight ? '⚠ Night Mode Active' : '✓ All Options Available'} badgeColor={isNight ? 'red' : 'green'} defaultOpen>
-          <div className="space-y-4">
-            {/* AI Recommendation */}
-            <div className="bg-slate-900 rounded-2xl p-5 text-white">
-              <div className="flex items-center gap-2 mb-3"><Sparkles size={14} className="text-amber-400" /><span className="text-xs font-black text-amber-400 uppercase tracking-widest">Best Option for You</span></div>
-              <div className="flex items-center gap-4">
-                <div className="text-4xl shrink-0">
-                  {totalPax >= 4 ? '🚐' : isNight ? '🚕' : airport.id.startsWith('icn') ? '🚆' : '🚌'}
-                </div>
-                <div>
-                  <h4 className="font-black text-lg">
-                    {totalPax >= 4 ? 'Private Airport Van' : isNight ? 'Night Bus / Taxi' : airport.id.startsWith('icn') ? 'AREX Express Train' : 'Airport Limousine Bus'}
-                  </h4>
-                  <p className="text-slate-400 text-sm font-semibold mt-1">
-                    {totalPax >= 4
-                      ? `${totalPax} people + luggage = van is cheaper & more comfortable than 2 taxis. Book on Klook.`
-                      : isNight
-                      ? `Exit at ~${exitTime}. Regular trains stopped. Use N-Bus or Kakao T app for taxi.`
-                      : airport.id.startsWith('icn')
-                      ? `Departs every 40 min from B1 (orange gates). ₩11,000 to Seoul Station in 43 min.`
-                      : `Direct bus to major hotels. Check airport bus counter on Arrival Level 1.`}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* All Options */}
-            <div className="grid grid-cols-1 gap-2">
-              {[
-                {
-                  icon: <Train size={16} />, name: 'AREX Express Train', color: 'blue',
-                  available: !isNight && airport.id.startsWith('icn'),
-                  price: '₩11,000', time: '43 min to Seoul Station',
-                  tip: 'B1 level, Orange gates. Buy at kiosk — card or cash. Runs 05:20–22:40.',
-                },
-                {
-                  icon: <Bus size={16} />, name: 'Airport Limousine Bus', color: 'green',
-                  available: !isNight,
-                  price: '₩16,000–25,000', time: '60–90 min depending on traffic',
-                  tip: 'Level 1, outside Arrivals. Buy at counter or machine. Goes direct to major hotel areas.',
-                },
-                {
-                  icon: <Car size={16} />, name: 'Kakao T Taxi', color: 'amber',
-                  available: true,
-                  price: `₩${airport.id.startsWith('icn') ? '60,000–90,000' : '15,000–40,000'}`, time: 'Door to door',
-                  tip: 'Download Kakao T app. Set pickup to "Arrivals Exit." Black Taxi = premium, no price gouging.',
-                },
-                {
-                  icon: <Car size={16} />, name: 'Private Van (Klook/Viator)', color: 'purple',
-                  available: totalPax >= 3,
-                  price: '₩80,000–150,000 total', time: 'Door to door',
-                  tip: `Best for ${totalPax >= 4 ? 'your group' : 'groups of 3+'}. Pre-book online. Driver meets you at arrivals.`,
-                },
-              ].map(opt => (
-                <div key={opt.name} className={`rounded-2xl p-4 border-2 ${!opt.available ? 'opacity-40 border-slate-100 bg-slate-50' : 'border-slate-100 bg-white'}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2 font-black text-slate-900 text-sm">{opt.icon} {opt.name}</div>
-                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${!opt.available ? 'bg-slate-100 text-slate-400' : 'bg-emerald-50 text-emerald-700'}`}>
-                      {!opt.available ? 'Not available now' : 'Available'}
-                    </span>
-                  </div>
-                  <div className="flex gap-4 text-xs text-slate-500 font-semibold mb-2">
-                    <span>💰 {opt.price}</span><span>⏱ {opt.time}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">{opt.tip}</p>
-                </div>
-              ))}
-            </div>
+        <Section icon={<Globe size={20} className="text-indigo-500" />} title="Full Survival Guide" badge="New" badgeColor="purple">
+          <div className="p-4 bg-slate-50 rounded-2xl text-center">
+            <p className="text-sm font-bold text-slate-800 mb-4">Want the complete 24-step master guide for 2026?</p>
+            <button 
+              onClick={() => router.push(`/airport/${airport.code.toLowerCase()}`)}
+              className="px-6 py-3 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 mx-auto"
+            >
+              Open Full Guide <ArrowRight size={16}/>
+            </button>
           </div>
         </Section>
 
-        {/* ─ Section 3: First Hour Checklist ─ */}
-        <Section icon={<CheckCircle size={20} className="text-amber-500" />} title="First Hour Checklist" badge="Do This Before Leaving the Airport" badgeColor="amber">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-purple-50 rounded-2xl p-4 border border-purple-100">
-                <h4 className="font-black text-purple-900 text-sm mb-3 flex items-center gap-2"><Smartphone size={14} /> SIM / Data</h4>
-                <div className="space-y-2 text-xs text-purple-800 font-semibold">
-                  <p>✅ <strong>Best: eSIM</strong> — buy before departure (Airalo, Ubigi). Activates on landing.</p>
-                  <p>✅ <strong>Physical SIM:</strong> Available at CU convenience store inside arrivals. KT/SK/LG.</p>
-                  <p>❌ <strong>Avoid:</strong> Roaming from your home country — very expensive.</p>
-                </div>
-              </div>
-              <div className="bg-green-50 rounded-2xl p-4 border border-green-100">
-                <h4 className="font-black text-green-900 text-sm mb-3 flex items-center gap-2"><CreditCard size={14} /> Money & Cards</h4>
-                <div className="space-y-2 text-xs text-green-800 font-semibold">
-                  <p>💡 Exchange only <strong>50,000–100,000 won</strong> at airport (bad rates).</p>
-                  <p>✅ Get a <strong>T-money card</strong> at convenience store (₩2,500). Tap for all transit.</p>
-                  <p>✅ Best rates: <strong>Myeongdong</strong> money changers or WOWPASS kiosk at subway.</p>
-                  <p>✅ Visa/Mastercard accepted almost everywhere in Seoul.</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-4">
-              <h4 className="font-black text-slate-800 text-sm mb-3">📱 Essential Apps — Download Now</h4>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  ['Naver Maps', 'Best for navigation in Korea'],
-                  ['Kakao T', 'Taxi booking — fair prices'],
-                  ['Papago', 'Naver translator — works offline'],
-                  ['Coupang Eats', 'Food delivery to your accommodation'],
-                ].map(([app, desc]) => (
-                  <div key={app} className="bg-white rounded-xl p-3 border border-slate-100">
-                    <p className="font-black text-slate-900 text-xs">{app}</p>
-                    <p className="text-[10px] text-slate-400 font-medium mt-0.5">{desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 4: Culture & Etiquette ─ */}
-        <Section icon={<Heart size={20} className="text-rose-500" />} title="Korean Culture Survival Guide" badge="Avoid Embarrassment" badgeColor="red">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {[
-                { emoji: '🚫', title: 'No Tipping', body: 'Tipping is NOT done in Korea — not at restaurants, hotels, or taxis. Offering a tip can feel rude.' },
-                { emoji: '👟', title: 'Shoes Off Indoors', body: 'Remove shoes when entering homes, guesthouses, and some traditional restaurants (look for raised floor).' },
-                { emoji: '🤫', title: 'Quiet in Public', body: 'Keep phone calls short and voices low on public transit. Priority seats (pink) are strictly for elderly.' },
-                { emoji: '🍺', title: 'Drinking Etiquette', body: 'Pour drinks for others, not yourself. Accept with two hands. Say "Geonbae!" (건배) for cheers.' },
-                { emoji: '👴', title: 'Respect Elders', body: 'Bow slightly when greeting older people. Let elderly passengers board first.' },
-                { emoji: '🗑️', title: 'Trash Rules', body: 'Buy designated bags at convenience stores (종량제 봉투). Separate food waste. Fines for violations.' },
-              ].map(item => (
-                <div key={item.title} className="bg-white border border-slate-100 rounded-2xl p-4">
-                  <p className="text-2xl mb-2">{item.emoji}</p>
-                  <h4 className="font-black text-slate-900 text-sm mb-1">{item.title}</h4>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 5: Season Guide ─ */}
-        <Section icon={seasonIcon} title={`${season} in Korea — What to Know`} badge={`Arrival: ${dayInfo?.label ?? ''}`} badgeColor="purple">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">🌡️ Weather & Clothing</h4>
-                <p className="text-xs text-slate-600 font-semibold leading-relaxed">
-                  {season === 'Spring' && 'Avg 10–18°C. Temperature swings daily — layers essential. High fine dust (미세먼지) in March–April. Bring or buy a KF94 mask.'}
-                  {season === 'Summer' && 'Avg 25–35°C with high humidity. Rainy season (장마) June–July. Carry a compact umbrella daily. Light, breathable clothing only.'}
-                  {season === 'Autumn' && 'Avg 12–22°C. Best weather of the year. Light jacket for evenings. Peak foliage late October — book accommodation early.'}
-                  {season === 'Winter' && 'Avg -5–5°C. Wind makes it feel colder. Long down parka + heattech base layer essential. Ondol (floor heating) in traditional stays.'}
-                </p>
-              </div>
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">📅 {season} Events</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  {season === 'Spring' && <>
-                    <li>🌸 Cherry blossom festival (late March–April)</li>
-                    <li>🎡 Jinhae Gunhangje Festival</li>
-                    <li>🌷 Yeouido Spring Flower Festival</li>
-                  </>}
-                  {season === 'Summer' && <>
-                    <li>🎵 Boryeong Mud Festival (July)</li>
-                    <li>🌊 Busan International Film Festival (October prep)</li>
-                    <li>🏖️ Beach season on Haeundae</li>
-                  </>}
-                  {season === 'Autumn' && <>
-                    <li>🍁 Naejangsan foliage hiking (October)</li>
-                    <li>🎬 Busan International Film Festival</li>
-                    <li>🏛️ Seoul Lantern Festival (November)</li>
-                  </>}
-                  {season === 'Winter' && <>
-                    <li>⛷️ Ski resorts open (December–February)</li>
-                    <li>🎆 New Year sunrise events at Jeongdongjin</li>
-                    <li>🏮 Hwacheon Sancheoneo Ice Festival</li>
-                  </>}
-                </ul>
-              </div>
-            </div>
-            <div className="bg-slate-900 rounded-2xl p-4">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">📺 {season} Korea Travel Tips</p>
-              <div className="space-y-2">
-                {(season === 'Spring'
-                  ? [['0:00','Cherry blossom spots ranking'],['1:30','Fine dust: KF94 vs KF80 masks'],['3:00','Best cherry blossom locations'],['4:45','Spring clothing packing list']]
-                  : season === 'Summer'
-                  ? [['0:00','Rainy season survival tips'],['1:20','Best beaches near Seoul'],['2:45','Air conditioning culture'],['4:00','Must-try summer foods']]
-                  : season === 'Autumn'
-                  ? [['0:00','Top foliage hiking trails'],['1:45','Autumn festival guide'],['3:10','Photography spots'],['4:30','Jacket packing tips']]
-                  : [['0:00','Winter clothing essentials'],['1:30','Ski resort guide'],['3:00','Ondol & staying warm'],['4:15','Winter street food']]
-                ).map(([t, d]) => (
-                  <div key={t} className="flex gap-3 text-xs"><span className="font-black text-blue-400 tabular-nums shrink-0">{t}</span><span className="text-slate-300 font-semibold">{d}</span></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 6: Food Guide ─ */}
-        <Section icon={<Utensils size={20} className="text-orange-500" />} title="Korean Food Guide" badge="What, How & Where to Eat" badgeColor="amber">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-3">
-              {[
-                { name: '삼겹살 Samgyeopsal', type: 'Pork BBQ', heat: '🌶 None', price: '₩12,000–18,000/person', desc: 'Grilled pork belly at the table. Cook it yourself on the grill. Wrap in lettuce with garlic & sauce.' },
-                { name: '비빔밥 Bibimbap', type: 'Mixed Rice', heat: '🌶 Mild', price: '₩8,000–12,000', desc: 'Rice, veggies, egg, gochujang sauce. Mix everything together. Safe for most diets.' },
-                { name: '순두부찌개 Sundubu Jjigae', type: 'Soft Tofu Stew', heat: '🌶🌶 Medium', price: '₩8,000–12,000', desc: 'Silky tofu in spicy broth. Comes with rice and small side dishes (banchan) — those are free refills!' },
-                { name: '떡볶이 Tteokbokki', type: 'Street Food', heat: '🌶🌶🌶 Hot', price: '₩3,000–5,000', desc: 'Chewy rice cakes in sweet-spicy sauce. Most iconic Korean street food. Find at pojangmacha stalls.' },
-              ].map(f => (
-                <div key={f.name} className="bg-white border border-slate-100 rounded-2xl p-4">
-                  <div className="flex items-start justify-between mb-1">
-                    <h4 className="font-black text-slate-900 text-sm">{f.name}</h4>
-                    <span className="text-xs font-bold text-slate-400 ml-2 shrink-0">{f.price}</span>
-                  </div>
-                  <div className="flex gap-2 mb-2">
-                    <span className="text-[10px] font-black bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full">{f.type}</span>
-                    <span className="text-[10px] font-black bg-red-50 text-red-500 px-2 py-0.5 rounded-full">{f.heat}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">{f.desc}</p>
-                </div>
-              ))}
-            </div>
-            <div className="bg-blue-50 rounded-2xl p-4">
-              <h4 className="font-black text-blue-900 text-sm mb-3">🗣️ Useful Phrases for Restaurants</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <PhraseCard en="I'm allergic to peanuts" ko="땅콩 알레르기가 있어요" romanized="Ttangkong allereugi ga isseoyo" />
-                <PhraseCard en="Not spicy please" ko="안 맵게 해주세요" romanized="An maepge haejuseyo" />
-                <PhraseCard en="The bill please" ko="계산서 주세요" romanized="Gyesanseo juseyo" />
-                <PhraseCard en="Delicious!" ko="맛있어요!" romanized="Masisseoyo!" />
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 7: Getting Around Korea ─ */}
-        <Section icon={<Globe size={20} className="text-indigo-500" />} title="Getting Around Korea" badge="Subway · Bus · KTX · Taxi" badgeColor="purple">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2 flex items-center gap-2"><Train size={14} /> Subway (지하철)</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>✅ Most reliable city transport</li>
-                  <li>✅ All signs in English + color-coded</li>
-                  <li>✅ Tap T-money card to enter/exit</li>
-                  <li>💰 Base fare ~₩1,400 per ride</li>
-                  <li>📱 Use <strong>Naver Maps</strong> or <strong>Subway Korea</strong> app</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2 flex items-center gap-2"><Car size={14} /> Taxi Tips</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>✅ Use <strong>Kakao T</strong> app — fair metered prices</li>
-                  <li>✅ Show address in Korean on your phone</li>
-                  <li>⚠️ Late night surcharge +20%</li>
-                  <li>⚠️ Always ask for a receipt (영수증)</li>
-                  <li>❌ Never enter unmarked taxis</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">🚄 KTX (High Speed Train)</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>✅ Seoul → Busan in 2h 15min</li>
-                  <li>✅ Book at <strong>Korail.com</strong> (foreigners get discounts)</li>
-                  <li>💰 Seoul–Busan from ₩59,800</li>
-                  <li>📍 Departs from Seoul Station or Suseo</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">🚌 Intercity Bus</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>✅ Cheaper than KTX</li>
-                  <li>✅ Reaches more cities</li>
-                  <li>📱 Book via <strong>Kobus.co.kr</strong></li>
-                  <li>📍 Departs from Express Bus Terminal (강남구)</li>
-                </ul>
-              </div>
-            </div>
-            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
-              <h4 className="font-black text-amber-900 text-sm mb-2">🗣️ Show This to Your Driver</h4>
-              <PhraseCard en="Please take me to this address" ko="이 주소로 가주세요" romanized="I jusoro gajuseyo" />
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 8: Emergency Kit ─ */}
-        <Section icon={<PhoneCall size={20} className="text-red-500" />} title="Emergency & SOS Guide" badge="Save These Numbers" badgeColor="red">
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { num: '119', label: 'Ambulance / Fire', desc: 'Medical emergency or fire. English operator available.' },
-                { num: '112', label: 'Police', desc: 'Crime or safety emergency. English support via interpretation.' },
-                { num: '1330', label: 'Tourism Hotline', desc: '24/7 FREE multilingual support. Lost items, translator, directions.' },
-              ].map(e => (
-                <div key={e.num} className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-                  <p className="text-3xl font-black text-red-600 mb-1">{e.num}</p>
-                  <p className="font-black text-red-900 text-sm mb-1">{e.label}</p>
-                  <p className="text-xs text-red-700 font-medium">{e.desc}</p>
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">🏥 Medical Emergency</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>✅ Most large hospitals have <strong>International Clinics</strong> with English staff</li>
-                  <li>✅ Samsung Seoul Hospital, Severance, Asan — top choices</li>
-                  <li>✅ 24h Pharmacy: search <strong>Pharm114.or.kr</strong></li>
-                  <li>💡 Bring your travel insurance documents</li>
-                </ul>
-              </div>
-              <div className="bg-white border border-slate-100 rounded-2xl p-4">
-                <h4 className="font-black text-slate-900 text-sm mb-2">📦 Lost Items</h4>
-                <ul className="text-xs text-slate-600 font-semibold space-y-1">
-                  <li>🚕 Taxi: call <strong>1330</strong> with receipt number</li>
-                  <li>🚇 Subway: visit station office or call <strong>1577-1234</strong></li>
-                  <li>🌐 Online: <strong>lost112.go.kr</strong> — police lost & found</li>
-                  <li>💡 Always photograph your taxi receipt</li>
-                </ul>
-              </div>
-            </div>
-            <div className="bg-slate-900 rounded-2xl p-4">
-              <h4 className="font-black text-white text-sm mb-3">🗣️ Emergency Phrases — Show Your Phone</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <PhraseCard en="I need an ambulance" ko="구급차가 필요해요" romanized="Gugeupchaga piryohaeyo" />
-                <PhraseCard en="Please call the police" ko="경찰을 불러주세요" romanized="Gyeongchal-eul bulleojuseyo" />
-                <PhraseCard en="I lost my passport" ko="여권을 잃어버렸어요" romanized="Yeokwon-eul ireoboryeosseoyo" />
-                <PhraseCard en="I need a doctor" ko="의사가 필요해요" romanized="Uisa-ga piryohaeyo" />
-              </div>
-            </div>
-          </div>
-        </Section>
-
-        {/* ─ Section 9: WiFi & Connectivity ─ */}
-        <Section icon={<Wifi size={20} className="text-sky-500" />} title="Stay Connected" badge="SIM · WiFi · Internet" badgeColor="blue">
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { title: 'eSIM (Recommended)', emoji: '📲', desc: 'Buy before leaving home via Airalo or Ubigi. Activate on landing. No physical card needed. From $8/week.' },
-                { title: 'Tourist SIM', emoji: '📦', desc: 'Buy at airport CU store or Pocket WiFi counter. KT, SK, LG. Unlimited data from ₩15,000/week.' },
-                { title: 'Pocket WiFi', emoji: '📡', desc: 'Rent at airport. Shares with your group. Return at departure. Good for 4+ people. ~₩6,000/day.' },
-              ].map(c => (
-                <div key={c.title} className="bg-sky-50 border border-sky-100 rounded-2xl p-4">
-                  <p className="text-2xl mb-2">{c.emoji}</p>
-                  <h4 className="font-black text-sky-900 text-sm mb-1">{c.title}</h4>
-                  <p className="text-xs text-sky-800 font-medium leading-relaxed">{c.desc}</p>
-                </div>
-              ))}
-            </div>
-            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
-              <p className="text-xs font-black text-emerald-800">💡 Korea has free WiFi almost everywhere: subway, cafes, McDonald's, convenience stores, and most tourist spots. You can survive short periods without data!</p>
-            </div>
-          </div>
-        </Section>
-
-        {/* Bottom Actions */}
         <div className="flex gap-3 pt-2 pb-8">
           <button onClick={() => setStep(1)}
             className="flex-1 py-4 bg-white border-2 border-slate-200 text-slate-600 font-black rounded-2xl hover:bg-slate-50 transition-all">
@@ -723,22 +369,20 @@ export default function App() {
     );
   };
 
-  // ── RENDER ──────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
       <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-6 h-14 flex items-center justify-between">
           <button onClick={() => setStep(1)} className="flex items-center gap-2 font-black text-slate-900 text-base tracking-tight hover:text-blue-600 transition-colors">
             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-              <PlaneLanding size={14} className="text-white" />
+              <Plane size={14} className="text-white fill-white" />
             </div>
-            Korea OSO Guide
+            WTOKO Guide
           </button>
           {step === 2 && airport && (
             <div className="flex items-center gap-2 text-xs font-black text-slate-400">
-              <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">{airport.code}{airport.terminal ? ' ' + airport.terminal : ''}</span>
+              <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">{airport.code}</span>
               <span>{season}</span>
-              {isNight && <span className="bg-rose-50 text-rose-500 px-2.5 py-1 rounded-full flex items-center gap-1"><Moon size={10} /> Night</span>}
             </div>
           )}
         </div>
@@ -749,5 +393,13 @@ export default function App() {
         {step === 2 && renderStep2()}
       </main>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <MainAppContent />
+    </Suspense>
   );
 }
