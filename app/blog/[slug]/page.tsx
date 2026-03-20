@@ -5,8 +5,6 @@ import { Calendar, Clock, ArrowLeft, Share2, Youtube, ExternalLink } from 'lucid
 import Comments from '@/components/Comments';
 import { BLOG_POSTS } from '@/Fetch/articleData';
 
-export const runtime = 'edge';
-
 export function generateStaticParams() {
   return Object.keys(BLOG_POSTS).map((slug) => ({ slug }));
 }
