@@ -7,6 +7,7 @@ export interface BlogPost {
   category: string;
   content: string;
   youtubeSearch: string;
+  youtubeTimeline: { time: string; desc: string }[];
 }
 
 export const BLOG_POSTS: Record<string, BlogPost> = {
@@ -18,6 +19,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Airport',
     youtubeSearch: 'Incheon Airport Arrival Guide for Foreigners',
+    youtubeTimeline: [
+      { time: "00:30", desc: "비행기 하차 후 위성 탑승동 진입 → 노란색 'ARRIVALS' 표지판만 따라가세요. 절대 'DEPARTURES' 방향 아님." },
+      { time: "02:00", desc: "에스컬레이터로 B1 하강 → 무료 셔틀 트레인 플랫폼. 열차는 3~5분 간격 운행." },
+      { time: "08:00", desc: "셔틀 트레인 하차 → 초록색 'IMMIGRATION' 표지판 따라 2층 이동." },
+      { time: "12:00", desc: "자동출입국 심사(e-Gate): 여권 스캔 → 양 검지 지문 → 카메라 응시. 약 30초 완료." },
+      { time: "18:00", desc: "수하물 벨트 → 항공편 번호로 본인 수하물 벨트 번호 확인 (전광판 참조)." },
+      { time: "22:00", desc: "세관 통과 → 좌측 B1 AREX 열차, 직진 버스·택시 (1층 출구 5~9번)." },
+    ],
     content: `
       <h2>Why Incheon T1 Confuses Nearly Every First-Time Visitor</h2>
       <p>Incheon International Airport Terminal 1 (T1) is one of the most awarded airports in the world — but it is also one of the most confusing for first-time arrivals. The reason? A significant portion of international flights land at a satellite concourse (Concourses A and B), not at the main terminal building. To reach Immigration, you must take an underground Shuttle Train.</p>
@@ -69,6 +78,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '5 min read',
     category: 'Airport',
     youtubeSearch: 'Step by Step Arrival at Korea Airport 2026',
+    youtubeTimeline: [
+      { time: "00:00", desc: "착륙 전 기내 → 카메라 앱 닫기. 한국 영공 진입 시부터 이민국 규정 적용 시작." },
+      { time: "05:00", desc: "이민국 홀 입장 → 입구에 'NO PHOTOGRAPHY' 표지 있음. 폰은 주머니에." },
+      { time: "10:00", desc: "이민국 심사대 → 모자·선글라스·마스크 제거. 지문·얼굴 인식 절차." },
+      { time: "15:00", desc: "수하물 찾는 곳 (수하물 클레임) → 여기서는 일반 촬영 가능." },
+      { time: "20:00", desc: "세관 검사 구역 → 다시 촬영 제한 구역. 물품 신고 없으면 그린 채널(녹색)." },
+      { time: "25:00", desc: "공개 도착 홀(Public Arrivals Hall) → 촬영 자유. 환영 인파·표지판 모두 OK." },
+    ],
     content: `
       <h2>Photography at Korean Airports: The Rules You Must Know</h2>
       <p>South Korean airports, particularly in immigration and customs areas, have strict rules about photography and video recording. These rules are enforced seriously — officers have the authority to delete your photos, confiscate your device for inspection, or in extreme cases, delay your entry while the situation is reviewed.</p>
@@ -127,6 +144,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '7 min read',
     category: 'Tech',
     youtubeSearch: 'Korea eSIM Setup in 1 Minute',
+    youtubeTimeline: [
+      { time: "출발 전", desc: "Airalo·KT eSIM 앱 다운로드 → 한국 플랜 구매 (7일 $10 / 30일 $20 내외). QR코드 저장." },
+      { time: "착륙 5분 전", desc: "비행기 모드 해제 준비 → 보조 SIM 슬롯에 eSIM 활성화 설정 확인." },
+      { time: "착륙 직후", desc: "비행기 모드 해제 → eSIM 자동 활성화 (1~3분). 공항 무료 WiFi 필요 없음." },
+      { time: "이민국 전", desc: "카카오맵·구글맵 미리 로딩 → LTE/5G 연결 확인. 즉시 사용 가능." },
+      { time: "05:00", desc: "유심 필요 시 → 도착 홀 CU·GS25 'Tourist USIM' 요청. 여권 지참 필수. 5~10분 개통." },
+      { time: "10:00", desc: "데이터 연결 테스트 → 유튜브 또는 카카오맵 실행으로 확인." },
+    ],
     content: `
       <h2>Staying Connected in Korea: Your 2026 Options</h2>
       <p>South Korea has some of the fastest and most reliable mobile internet in the world. 5G coverage in major cities is excellent, and 4G LTE is available virtually everywhere. The challenge for tourists is not the network quality — it is navigating the SIM purchasing process efficiently.</p>
@@ -209,6 +234,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Transport',
     youtubeSearch: 'Incheon Airport to Seoul: AREX vs Taxi vs Van',
+    youtubeTimeline: [
+      { time: "00:00", desc: "세관 통과 → 1층 도착 홀. 4인+대형 캐리어 4개 상황." },
+      { time: "02:00", desc: "일반 택시 줄 → 기사가 트렁크 확인 후 고개를 저음. 소나타 트렁크는 대형 캐리어 2개 한계." },
+      { time: "03:00", desc: "KakaoT 앱 실행 → '대형 택시' 또는 'Venti(밴)' 선택. 예상 요금 표시." },
+      { time: "05:00", desc: "점보 택시 승강장 (1층 4~7번 출구 오른쪽) → '점보택시' 간판 확인. 대형 캐리어 6개까지 가능." },
+      { time: "07:00", desc: "Klook 밴 사전 예약 시 → 도착 홀에서 이름 팻말 든 기사 대기. 가장 스트레스 없는 선택." },
+      { time: "60:00", desc: "호텔 앞 하차. 기사가 짐 내려줌." },
+    ],
     content: `
       <h2>The Luggage Problem That Surprises Every Group</h2>
       <p>You have just landed at Incheon after a long flight, your group has four people, and everyone has a 28-inch suitcase. You head to the taxi stand, relieved to finally be on the ground. Then the driver opens the trunk, looks at your bags, and shakes his head. A standard Korean Sonata or Avante sedan taxi has a trunk that physically cannot fit more than two large suitcases. Your group is stuck.</p>
@@ -261,6 +294,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '7 min read',
     category: 'Transport',
     youtubeSearch: 'How to take AREX Express Train to Seoul',
+    youtubeTimeline: [
+      { time: "00:00", desc: "B1 AREX 플랫폼 → 전광판에서 '직통 (Express)' vs '일반 (All-Stop)' 구분." },
+      { time: "01:00", desc: "오렌지 직통(급행): 티켓 기계에서 '직통' 선택 → ₩11,000 → 좌석 지정권 출력." },
+      { time: "01:30", desc: "파란 일반(완행): T-Money 카드 태그만 해도 탑승 가능 → ₩4,550. 예약 불필요." },
+      { time: "04:00", desc: "오렌지 열차 탑승 → 출발. 중간 정차 없음. 차내 WiFi 무료 제공." },
+      { time: "43:00", desc: "서울역(Seoul Station) 도착 → 오렌지 급행 종점. 1·4호선 환승 또는 리무진 버스 연결." },
+      { time: "56:00", desc: "파란 일반 서울역 도착 (홍대입구 36분, DMC 31분에 먼저 정차)." },
+    ],
     content: `
       <h2>The AREX: Seoul's Airport Rail Link Explained</h2>
       <p>The Airport Railroad Express (AREX) is the train line connecting Incheon International Airport to downtown Seoul. It is fast, reliable, air-conditioned, and runs from 5:20 AM to midnight. For most solo travelers and couples without excessive luggage, the AREX is the best way into Seoul.</p>
@@ -328,6 +369,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'SOS',
     youtubeSearch: 'Korea Travel Emergency Guide: 1330 & LOST112',
+    youtubeTimeline: [
+      { time: "00:00", desc: "긴급 상황 발생 → 1330 전화 (무료, 24시간). 첫 번째 영어 안내 나오면 '1' 누르기." },
+      { time: "00:30", desc: "통역사 연결 → 3자 통화로 택시기사·약사·식당 주인과 실시간 소통 가능." },
+      { time: "02:00", desc: "분실물 신고 → 경찰: 112 / 분실물 찾기: LOST112.go.kr 접속." },
+      { time: "05:00", desc: "Papago 앱 → 카메라 모드 실행 → 온돌/에어컨 리모컨 한국어 버튼 실시간 번역." },
+      { time: "07:00", desc: "텍스트 번역 → 메뉴판 또는 간판 촬영 → 즉시 번역. 오프라인 한국어 팩 미리 다운로드 권장." },
+    ],
     content: `
       <h2>The Two Resources That Solve Almost Every Problem in Korea</h2>
       <p>Korea is an incredibly safe and well-organized country for tourists. But language barriers and unfamiliar systems can still create stressful situations. Two tools — the 1330 hotline and the Papago translation app — solve the vast majority of problems you will encounter. Bookmark this page before your trip.</p>
@@ -391,6 +439,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '7 min read',
     category: 'Money',
     youtubeSearch: 'Myeongdong Exchange vs WOWPASS 2026',
+    youtubeTimeline: [
+      { time: "00:00", desc: "공항 환전소 → 환율 최악 (5~8% 수수료). 긴급 소액만 환전 (₩30,000 이내)." },
+      { time: "10:00", desc: "WOWPASS 기계 (홍대·명동·강남역 등 주요 지하철역 내) → 외국 카드 삽입 → 원화 충전." },
+      { time: "12:00", desc: "WOWPASS 카드 수령 → 편의점·식당·카페에서 T-Money+페이 겸용 사용 가능." },
+      { time: "15:00", desc: "명동 사설 환전소 (하나은행 명동점 인근) → 여권 지참 시 최고 환율 제공." },
+      { time: "20:00", desc: "ATM 출금 → 글로벌 ATM (GS25·CU 내 '글로벌 ATM' 스티커 확인) → 해외 카드로 원화 출금." },
+    ],
     content: `
       <h2>Managing Money in Korea: What Actually Works in 2026</h2>
       <p>South Korea is one of the most cashless societies in the world. The vast majority of transactions — restaurants, taxis, convenience stores, cafes, taxis — accept credit and debit cards. However, international cards (especially non-Visa/Mastercard) sometimes fail at certain terminals. Having a backup strategy is wise.</p>
@@ -453,6 +508,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Culture',
     youtubeSearch: 'What to wear in Korea: Season Guide',
+    youtubeTimeline: [
+      { time: "11~2월", desc: "필수: 롱패딩(무릎 아래) + 유니클로 히트텍 2장 겹치기. 영하 15°C 체감 대비." },
+      { time: "3~4월", desc: "낮에는 가을 재킷, 아침저녁은 추움. 벚꽃 시즌 → 여의도·경복궁 혼잡 예상." },
+      { time: "5~6월", desc: "가장 좋은 날씨. 얇은 카디건·청재킷. 자외선 차단제 필수." },
+      { time: "7~8월", desc: "고온다습 → 편의점 투명 우산 ₩3,000에 구매. 습도 90%에도 사용 가능한 통기성 옷 권장." },
+      { time: "9~10월", desc: "가을 단풍 시즌. 낮에는 반팔 가능, 저녁은 긴팔 필요." },
+    ],
     content: `
       <h2>Korea's Four Distinct Seasons</h2>
       <p>South Korea experiences four dramatically different seasons, and packing wrong can make or ruin your trip. Unlike many travel destinations where "layers" is a sufficient answer, Korea's seasonal extremes require specific clothing knowledge.</p>
@@ -513,6 +575,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Culture',
     youtubeSearch: 'Is Discover Seoul Pass worth it?',
+    youtubeTimeline: [
+      { time: "출발 전", desc: "discoverseoulpass.com에서 24·48·72시간권 구매. 앱 바코드 저장 → 종이 발권 불필요." },
+      { time: "09:00", desc: "경복궁 입장 → 앱 QR 스캔. 별도 티켓 구매 없이 입장. 성인 ₩3,000 아낌." },
+      { time: "11:00", desc: "창덕궁·덕수궁도 동일하게 스캔 입장. 궁 투어 5개 모두 포함." },
+      { time: "13:00", desc: "롯데월드 입장 → 줄 없이 바코드만 스캔. 일반 티켓 ₩65,000 vs 패스 사용." },
+      { time: "15:00", desc: "한강 유람선·남산 케이블카 포함 여부 확인 (패스 버전에 따라 다름)." },
+      { time: "하루 끝", desc: "5개 명소 이상 방문 시 기준 100달러 이상 절약 확인." },
+    ],
     content: `
       <h2>What Is the Discover Seoul Pass?</h2>
       <p>The Discover Seoul Pass is an official Seoul city tourism card that combines free admission to over 50 major attractions with unlimited use of the Seoul metro and bus system. It comes in 24-hour, 48-hour, and 72-hour versions, priced at approximately ₩39,900, ₩55,000, and ₩70,000 respectively ($30, $41, $52 USD).</p>
@@ -584,6 +654,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'SOS',
     youtubeSearch: 'How to throw away trash in Korea Airbnb',
+    youtubeTimeline: [
+      { time: "00:00", desc: "편의점에서 종량제 봉투(파란색/하얀색) 구매. 크기: 5L·10L·20L. 이 봉투만 일반쓰레기에 사용 가능." },
+      { time: "02:00", desc: "닭 뼈·조개껍데기·복숭아씨 → 일반쓰레기(종량제 봉투). 음식물 아님." },
+      { time: "03:00", desc: "채소 껍질·밥·국물 → 음식물 쓰레기(갈색 통 또는 별도 비닐). 지역마다 방법 다름." },
+      { time: "05:00", desc: "분리수거 → 플라스틱/종이/유리/캔 각각 분리. 라벨 제거 후 깨끗이 씻어야 함." },
+      { time: "08:00", desc: "Airbnb 호스트 지침 우선 따르기. 규칙 위반 시 과태료 5만~30만원 가능." },
+    ],
     content: `
       <h2>Korea's Mandatory Waste Separation System</h2>
       <p>South Korea operates one of the world's most rigorous waste management systems. Recycling is not optional — it is legally required and enforced. Violating waste disposal rules, especially using the wrong type of bag, can result in fines. For tourists staying in Airbnbs, guesthouses, or serviced apartments, understanding this system prevents unnecessary stress.</p>
@@ -644,6 +721,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'SOS',
     youtubeSearch: 'Getting Medicine in Korea Guide',
+    youtubeTimeline: [
+      { time: "00:00", desc: "심야 복통·두통 → 편의점(CU·GS25) 먼저. 이부프로펜·타이레놀·소화제 처방전 없이 구매." },
+      { time: "05:00", desc: "Pharm114.or.kr 접속 → '야간 당번 약국' 검색 → 현재 내 위치 기준 24시간 약국 찾기." },
+      { time: "10:00", desc: "약국(약국 간판, 빨간 십자가) → 약사에게 증상 설명. Papago 사용. 처방전 없이 대부분 구매 가능." },
+      { time: "15:00", desc: "응급 상황 → 119 (구급차). 1339 전화 → 의료 상담 (영어 통역 연결)." },
+      { time: "20:00", desc: "코로나·독감 키트 → 편의점에서 판매. 10분 내 자가진단 가능." },
+    ],
     content: `
       <h2>Healthcare and Medicine Access in Korea for Tourists</h2>
       <p>South Korea has an excellent healthcare system. Major hospitals are modern and well-equipped, and the country has a robust pharmacy network. However, the system works differently from Western countries, and knowing what you can access without a prescription — and where — saves significant time and money during your trip.</p>
@@ -699,6 +783,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '7 min read',
     category: 'Culture',
     youtubeSearch: 'Best time to visit Korea: Season Guide',
+    youtubeTimeline: [
+      { time: "3~4월", desc: "벚꽃 최성수기 → 여의도·경주·진해. 호텔 2~3배 가격 급등. 최소 3개월 전 예약 필수." },
+      { time: "5~6월", desc: "여행 최고 시즌. 날씨 쾌적, 관광객 상대적으로 적음. 한국 사람들도 여행 많이 가는 시기." },
+      { time: "7~8월", desc: "부산 해운대·제주 성수기. 고온다습. 휴가철 특수 → 가격 최고점." },
+      { time: "9~10월", desc: "단풍 시즌. 내장산·설악산 최고 절경. 10월 중순이 피크." },
+      { time: "12~2월", desc: "비수기 → 항공·호텔 가장 저렴. 나미섬 설경, 비발디파크 스키. 영하 체감 대비 필수." },
+    ],
     content: `
       <h2>The Best Times to Visit South Korea</h2>
       <p>South Korea's tourism calendar has distinct peaks and valleys. Timing your visit correctly can mean the difference between stunning natural beauty and queues in the rain. Here is the honest breakdown by season.</p>
@@ -762,6 +853,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Food',
     youtubeSearch: 'How to eat Korean BBQ (Samgyeopsal) properly',
+    youtubeTimeline: [
+      { time: "00:00", desc: "입장 → 메뉴에서 '생(生)삼겹살' 주문. 냉동 아닌 신선육. 2인분(200g×2) 기준 ₩26,000~." },
+      { time: "05:00", desc: "고기 불판에 올리면 → 직접 굽거나 직원에게 맡김. 뒤집는 시기는 갈색으로 변할 때." },
+      { time: "10:00", desc: "쌈 싸기: 깻잎·상추 위에 고기+쌈장+마늘+파절임 올리기 → 한 입에 통째로 먹기." },
+      { time: "12:00", desc: "반찬(밑반찬) → 김치·콩나물·된장국 등 무제한 리필. 벨 눌러서 요청." },
+      { time: "15:00", desc: "가위로 고기 자르기 → 정상. 한국 식당에서는 당연한 일. 젓가락으로 고기 집어도 됨." },
+      { time: "20:00", desc: "계산 → 카운터로 직접 가기 (테이블에서 계산서 안 가져다 줌)." },
+    ],
     content: `
       <h2>Korean BBQ: More Than Just Grilling Meat</h2>
       <p>Korean BBQ (삼겹살, samgyeopsal, or 고기구이, gogigui) is one of Korea's defining cultural experiences. It is also a social ritual with unwritten rules that, once understood, dramatically enhance the experience. This guide explains exactly how to order, grill, and eat Korean BBQ the right way.</p>
@@ -818,6 +917,12 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Food',
     youtubeSearch: 'Majang Meat Market Hanwoo Tour',
+    youtubeTimeline: [
+      { time: "00:00", desc: "마장 축산물 시장 (5호선 마장역) → 한우 직구매. 마블링 등급: 1++ > 1+ > 1 > 2 > 3." },
+      { time: "10:00", desc: "정육식당 2층 → 시장에서 산 고기를 가져가면 구워주는 쿡형 식당. 1인 ₩5,000 테이블 이용료." },
+      { time: "20:00", desc: "청담·강남 한우 전문점 → 1++등급 채끝 1인분 ₩80,000~₩150,000. 예약 필수." },
+      { time: "30:00", desc: "마트(이마트·롯데마트) 한우 코너 → 가성비 선택. 1+등급 100g ₩8,000~₩15,000." },
+    ],
     content: `
       <h2>What Is Hanwoo Beef?</h2>
       <p>Hanwoo (한우) is Korea's native cattle breed, prized for its exceptional marbling, flavor, and texture. It is to Korean cuisine what Wagyu is to Japanese: the gold standard of beef, intensely marbled, and significantly more expensive than imported alternatives. Experiencing genuine Hanwoo is one of the most memorable food experiences available in Korea.</p>
@@ -866,6 +971,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '5 min read',
     category: 'Shopping',
     youtubeSearch: 'Getting Glasses in Korea in 30 Minutes',
+    youtubeTimeline: [
+      { time: "00:00", desc: "동대문·남대문 안경 거리 또는 홍대 안경원 방문 → 영어 가능한 곳 많음." },
+      { time: "05:00", desc: "시력 검사 무료 → 결과지 받기 (약 5분). 집에서 온 처방전도 사용 가능." },
+      { time: "10:00", desc: "프레임 선택 → 기본 프레임 포함 단렌즈(1.56) 기준 ₩20,000~₩50,000. 기능 렌즈 추가 시 추가금." },
+      { time: "15:00", desc: "제작 시작 → 일반 렌즈는 20~30분 완성. 고굴절·코팅 렌즈는 1~2시간." },
+      { time: "30:00", desc: "완성 → 세팅 조정 무료. 착용 테스트 후 이상 없으면 바로 사용 가능." },
+    ],
     content: `
       <h2>Korea's Optical Industry: A Hidden Gem for Travelers</h2>
       <p>South Korea is quietly famous among expats and informed travelers for one specific service that most visitors completely overlook: eyeglasses. Korean optical shops (안경원, angyeongwon) offer a combination of speed, quality, and price that simply does not exist in most Western countries.</p>
@@ -918,6 +1030,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '5 min read',
     category: 'Food',
     youtubeSearch: 'Ordering Fried Chicken to Han River (No Korean ID)',
+    youtubeTimeline: [
+      { time: "00:00", desc: "Shuttle Delivery 앱 다운로드 (영어 지원, 국제 카드 사용 가능). 위치 권한 허용." },
+      { time: "05:00", desc: "한강 공원에서 현재 위치 핀 설정 → '배달 2구역' 선택. 닭강정·맥주·수박 주문." },
+      { time: "10:00", desc: "국제 신용카드로 앱 내 결제. 카카오 계정 없어도 주문 가능." },
+      { time: "30:00", desc: "라이더가 배달 구역 2번에 도착 → 앱 알림 수신 → 수령." },
+      { time: "35:00", desc: "한강 돗자리 위에서 치킨+맥주 즐기기. 여름 성수기엔 40~50분 걸릴 수 있음." },
+    ],
     content: `
       <h2>The Han River Chimeak Experience</h2>
       <p>"Chimeak" (치맥) is the beloved Korean combination of fried chicken (치킨, chikin) and beer (맥주, maekju). The Han River parks are the iconic setting for this experience — sitting on a mat by the river as the sun sets, with a bucket of crispy fried chicken and cold beer, is genuinely one of Seoul's finest simple pleasures.</p>
@@ -972,6 +1091,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '5 min read',
     category: 'Transport',
     youtubeSearch: 'Send Luggage from Incheon Airport to Hotel Direct',
+    youtubeTimeline: [
+      { time: "00:00", desc: "수하물 찾기 후 → 1층 4~6번 출구 사이 T-Luggage 카운터 찾기. (ICN T1 기준)" },
+      { time: "02:00", desc: "배송 신청서 작성: 호텔 이름·주소·체크인 시간·방 번호 기재." },
+      { time: "05:00", desc: "가방당 ₩15,000~₩25,000 결제 → 추적 영수증 수령." },
+      { time: "08:00", desc: "이제 완전 빈손 → AREX 또는 버스로 자유롭게 이동 시작." },
+      { time: "21:00", desc: "호텔 프런트에 짐 배송 완료 (12시 이전 접수 시 당일 오후 9시까지 도착)." },
+    ],
     content: `
       <h2>The Case for Hands-Free Travel in Korea</h2>
       <p>Navigating Seoul's metro system with large suitcases is genuinely difficult. Subway cars during rush hour have minimal space for luggage. Many stations have stairs despite elevator options. And the walk from a station to a hotel in a hilly neighborhood can involve stairs and narrow alleyways. Korea's luggage delivery services solve this elegantly.</p>
@@ -1025,6 +1151,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '5 min read',
     category: 'Tech',
     youtubeSearch: 'How to survive Korean Restaurant Waiting Apps',
+    youtubeTimeline: [
+      { time: "00:00", desc: "인기 식당 도착 → 문 앞 QR코드 스캔 (캐치테이블 글로벌 앱 or 네이버 웨이팅)." },
+      { time: "01:00", desc: "인원 수 선택 → 가상 번호 발급. 앱 알림으로 내 차례 알려줌. 자리 이탈 가능." },
+      { time: "20:00", desc: "앱 알림 수신 → 5분 내 식당으로 돌아가야 함. 넘기면 자동 취소." },
+      { time: "25:00", desc: "도착 확인 누르기 → 입장. 줄 서는 시간 없이 그 동안 주변 관광 가능." },
+      { time: "30:00", desc: "CatchTable 사전 예약 → 유명 오마카세·브런치 카페는 1~4주 전 예약 필요." },
+    ],
     content: `
       <h2>The Queue Problem in Korean Food Culture</h2>
       <p>Korea's food culture is intensely trend-driven. A restaurant or cafe featured on a popular YouTube channel, Instagram page, or variety show can develop queues of 1–3 hours within a week of the feature. For tourists with limited time in the country, standing in a 2-hour queue for a single meal is an inefficient use of precious travel days.</p>
@@ -1086,6 +1219,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Transport',
     youtubeSearch: 'Don\'t hail a Taxi! Use Kakao T or Uber in Korea',
+    youtubeTimeline: [
+      { time: "00:00", desc: "KakaoT 앱 실행 → 목적지 설정 → 예상 요금 확인. 일반·모범·밴·대형 선택." },
+      { time: "01:00", desc: "해외 카드 결제 실패 시 → '현장 결제' 선택. 기사에게 카드 또는 현금으로 직접 결제." },
+      { time: "02:00", desc: "기사 배정 → 차량 번호 확인 후 탑승. 탑승 전 번호 일치 필수." },
+      { time: "05:00", desc: "목적지 자동 안내 → 기사에게 따로 설명 불필요. 앱 지도로 경로 확인 가능." },
+      { time: "30:00", desc: "도착 → 앱 자동 결제 또는 현금·카드 기사에게 결제. 영수증 자동 발송." },
+    ],
     content: `
       <h2>Taxis in Korea: Safe, Affordable, and Mostly Metered</h2>
       <p>Korean taxis are generally safe, metered, and reasonably priced compared to Western cities. A cross-city Seoul ride (e.g., Hongdae to Gangnam) typically costs ₩25,000–₩40,000 ($19–$30 USD) depending on traffic. However, the occasional bad experience — overcharging tourists, taking unnecessarily long routes, refusing passengers — makes using a taxi app rather than street hailing the strongly preferred option.</p>
@@ -1147,6 +1287,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Shopping',
     youtubeSearch: 'Olive Young Must-Haves & Instant Tax Refund Guide',
+    youtubeTimeline: [
+      { time: "00:00", desc: "올리브영 입장 → 즉시 환급 대상: ₩30,000 이상 단일 영수증 구매. 외국인 전용." },
+      { time: "05:00", desc: "계산대에서 여권 제시 → 직원이 VAT(10%) 즉시 차감 후 결제. 공항 환급 부스 불필요." },
+      { time: "10:00", desc: "명동 올리브영 → 인기 아이템: 선크림·토너패드·마스크팩·클렌징폼. 한국 최저가." },
+      { time: "15:00", desc: "1일 구매 한도 ₩500,000 (면세 기준). 초과 시 공항 환급으로 처리." },
+      { time: "20:00", desc: "공항 면세 환급 → 출발장 세관 신고 도장 → 환급 부스 방문. 소요 시간 30~60분." },
+    ],
     content: `
       <h2>Olive Young: Korea's Beauty Pharmacy</h2>
       <p>Olive Young (올리브영) is the dominant health and beauty retailer in South Korea, with over 1,300 locations nationwide including multiple stores in every major tourist area. It combines the roles of pharmacy, cosmetics store, skincare retailer, and supplement shop in one accessible format. For K-beauty enthusiasts, it is a mandatory stop.</p>
@@ -1211,6 +1358,13 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '6 min read',
     category: 'Culture',
     youtubeSearch: '10 Things NOT to do in South Korea',
+    youtubeTimeline: [
+      { time: "00:00", desc: "식당 입장 → 자리에서 직원 부르면 안 됨. 테이블 벨(호출 버튼) 또는 손들기." },
+      { time: "02:00", desc: "계산 → 직원이 와서 받아주지 않음. 식사 후 카운터로 직접 가기." },
+      { time: "05:00", desc: "팁 없음 → 한국은 노팁 문화. 놓고 가면 직원이 쫓아올 수 있음." },
+      { time: "10:00", desc: "지하철 음식 섭취 → 법적 금지는 아니지만 강한 사회적 금기. 특히 냄새 나는 음식." },
+      { time: "15:00", desc: "어른보다 먼저 식사 시작 → 어른이 먹기 시작하면 식사 시작. 술잔 직접 채우지 않기." },
+    ],
     content: `
       <h2>Korean Social Etiquette: What Visitors Need to Know</h2>
       <p>South Korea has a rich culture with specific social norms that differ significantly from Western or other Asian contexts. Violating these norms rarely results in confrontation — Koreans are generally very patient with tourists — but understanding them allows you to engage more respectfully and authentically.</p>
@@ -1257,6 +1411,14 @@ export const BLOG_POSTS: Record<string, BlogPost> = {
     readTime: '7 min read',
     category: 'Culture',
     youtubeSearch: 'First Time at a Korean Bathhouse (Jjimjilbang Guide)',
+    youtubeTimeline: [
+      { time: "00:00", desc: "입장료 ₩8,000~₩15,000 지불 → 락커 열쇠 수령. 성별 분리 구역에서 모든 소지품 보관." },
+      { time: "05:00", desc: "탈의실 → 완전 탈의 필수. 수영복·속옷 착용 불가. 한국 목욕 문화 핵심." },
+      { time: "10:00", desc: "탕 입장: 온탕(42°C)→냉탕(18°C) 번갈아 사용. 수건 들고 다니기." },
+      { time: "20:00", desc: "때밀이 서비스 (이태리 타올) → 기사에게 별도 ₩15,000~₩25,000. 예약 또는 현장 접수." },
+      { time: "30:00", desc: "공용 찜질방 구역 → 제공된 반바지+티셔츠 착용 후 입장. 가족 혼용 공간." },
+      { time: "40:00", desc: "황토방(60°C)·소금방(50°C)·냉방(15°C) 순환. 각 15~20분 권장." },
+    ],
     content: `
       <h2>What Is a Jjimjilbang?</h2>
       <p>A jjimjilbang (찜질방) is a Korean public bathhouse and sauna complex. The word literally means "heated room bathing place." Unlike a simple sauna, a jjimjilbang is a full social wellness facility that Koreans use for relaxation, hangout sessions, and even overnight stays. Entry fees are cheap — typically ₩10,000–₩15,000 ($7–$11 USD) — and the experience is genuinely one of the most distinctive things you can do in Korea.</p>

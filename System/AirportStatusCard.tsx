@@ -33,13 +33,15 @@ function StatusBadge({ status }: { status: AirportStatus }) {
 // ─── Transport Icon ──────────────────────────────────────────────────────────
 
 function TransportIcon({ type }: { type: Transport["type"] }) {
-  const config = {
+  const config: Record<string, { icon: React.ReactNode; cls: string }> = {
     train: { icon: <Train className="w-4 h-4" />, cls: "bg-blue-50 text-blue-600" },
     bus:   { icon: <Bus   className="w-4 h-4" />, cls: "bg-amber-50 text-amber-600" },
     taxi:  { icon: <Car   className="w-4 h-4" />, cls: "bg-purple-50 text-purple-600" },
+    van:   { icon: <Car   className="w-4 h-4" />, cls: "bg-orange-50 text-orange-600" },
+    walk:  { icon: <Car   className="w-4 h-4" />, cls: "bg-slate-50 text-slate-600" },
     pass:  { icon: <CreditCard className="w-4 h-4" />, cls: "bg-emerald-50 text-emerald-600" },
   };
-  const { icon, cls } = config[type];
+  const { icon, cls } = config[type] ?? config["taxi"];
   return (
     <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 ${cls}`}>
       {icon}

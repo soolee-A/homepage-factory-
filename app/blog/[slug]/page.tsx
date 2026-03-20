@@ -5,6 +5,8 @@ import { Calendar, Clock, ArrowLeft, Share2, Youtube, ExternalLink } from 'lucid
 import Comments from '@/components/Comments';
 import { BLOG_POSTS } from '@/Fetch/articleData';
 
+export const runtime = 'edge';
+
 export function generateStaticParams() {
   return Object.keys(BLOG_POSTS).map((slug) => ({ slug }));
 }
@@ -58,25 +60,35 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      <div className="bg-red-50 rounded-3xl p-8 mb-20 border border-red-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-white rounded-2xl shadow-sm">
-            <Youtube className="text-red-600 w-8 h-8" />
+      {/* YouTube Timeline */}
+      <div className="bg-slate-900 rounded-3xl overflow-hidden mb-8 border border-slate-800">
+        <div className="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-red-600/10 rounded-xl">
+              <Youtube className="text-red-500 w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="text-base font-black text-white">영상 증거 타임라인</h4>
+              <p className="text-xs text-slate-400 font-medium">Video Evidence Timeline — 실제 상황 기준</p>
+            </div>
           </div>
-          <div>
-            <h4 className="text-lg font-black text-slate-900 leading-tight">Visual Guide</h4>
-            <p className="text-sm text-slate-500 font-medium">Watch real-life demonstrations on YouTube</p>
-          </div>
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(post.youtubeSearch)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-black rounded-xl transition-all"
+          >
+            유튜브에서 보기 <ExternalLink size={14} />
+          </a>
         </div>
-        <a 
-          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(post.youtubeSearch)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center space-x-2 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-red-100 hover:scale-[1.02]"
-        >
-          <span>Search Guide</span>
-          <ExternalLink size={16} />
-        </a>
+        <div className="p-6 space-y-4">
+          {post.youtubeTimeline.map((item, i) => (
+            <div key={i} className="flex gap-4 items-start">
+              <span className="text-blue-400 font-black text-xs tabular-nums bg-blue-500/10 px-2 py-1 rounded-lg shrink-0 min-w-[52px] text-center">{item.time}</span>
+              <span className="text-slate-300 text-sm leading-relaxed">{item.desc}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="border-t border-slate-100 pt-12">
