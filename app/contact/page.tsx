@@ -35,10 +35,10 @@ export default function ContactPage() {
             For general questions about our content, Korea travel tips, or anything else.
           </p>
           <a
-            href="mailto:hello@koreaoso.com"
+            href="mailto:youinvite@naver.com"
             className="inline-flex items-center space-x-2 text-blue-600 font-bold hover:text-blue-800 transition-colors"
           >
-            <span>hello@koreaoso.com</span>
+            <span>youinvite@naver.com</span>
           </a>
         </div>
 
@@ -50,10 +50,10 @@ export default function ContactPage() {
             Found outdated or incorrect information? We take accuracy seriously and appreciate all corrections.
           </p>
           <a
-            href="mailto:corrections@koreaoso.com"
+            href="mailto:youinvite@naver.com"
             className="inline-flex items-center space-x-2 text-green-600 font-bold hover:text-green-800 transition-colors"
           >
-            <span>corrections@koreaoso.com</span>
+            <span>youinvite@naver.com</span>
           </a>
         </div>
 
@@ -65,10 +65,10 @@ export default function ContactPage() {
             For privacy-related requests, data deletion, or GDPR / CCPA inquiries.
           </p>
           <a
-            href="mailto:privacy@koreaoso.com"
+            href="mailto:youinvite@naver.com"
             className="inline-flex items-center space-x-2 text-purple-600 font-bold hover:text-purple-800 transition-colors"
           >
-            <span>privacy@koreaoso.com</span>
+            <span>youinvite@naver.com</span>
           </a>
         </div>
 
@@ -109,7 +109,7 @@ export default function ContactPage() {
             },
             {
               q: "Do you accept guest posts or sponsored content?",
-              a: "Korea OSO does not publish sponsored posts or paid editorial content. We accept guest contributions only from verified Korea travel experts, subject to our editorial review process. Contact us at hello@koreaoso.com to discuss."
+              a: "Korea OSO does not publish sponsored posts or paid editorial content. We accept guest contributions only from verified Korea travel experts, subject to our editorial review process. Contact us at youinvite@naver.com to discuss."
             },
             {
               q: "Is K-ETA required for my country?",
@@ -117,7 +117,7 @@ export default function ContactPage() {
             },
             {
               q: "How do I report a scam or incorrect information?",
-              a: "We take accuracy very seriously. If you encounter incorrect information or have been a victim of a travel scam in Korea, please email corrections@koreaoso.com with the details. We will investigate and update our guide accordingly."
+              a: "We take accuracy very seriously. If you encounter incorrect information or have been a victim of a travel scam in Korea, please email youinvite@naver.com with the details. We will investigate and update our guide accordingly."
             },
           ].map((item, i) => (
             <div key={i} className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">

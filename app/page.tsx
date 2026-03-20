@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   PlaneLanding, MapPin, Calendar, Users, Clock, ChevronDown, Check,
   AlertTriangle, Info, Train, Car, Bus, Smartphone, CreditCard,
@@ -9,7 +9,6 @@ import {
   Moon, Sun, Snowflake, Leaf, Flower2, ArrowRight, Globe, Wifi, Plane,
 } from 'lucide-react';
 
-export const runtime = 'edge';
 
 // ── Types ──────────────────────────────────────────────────────────────
 interface Airport {
@@ -120,6 +119,7 @@ function Section({ icon, title, badge, badgeColor = 'blue', children, defaultOpe
 // ── Main Content Component ──
 function MainAppContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedId, setSelectedId] = useState('');
   const [arrivalDate, setArrivalDate] = useState('2026-04-01');
@@ -137,8 +137,8 @@ function MainAppContent() {
 
     if (airportParam) {
       const cleanParam = airportParam.toUpperCase();
-      const match = AIRPORTS.find(a => 
-        cleanParam.includes(a.code) || 
+      const match = AIRPORTS.find(a =>
+        cleanParam.includes(a.code) ||
         cleanParam.includes(a.nameEn.toUpperCase()) ||
         cleanParam.includes(a.nameKo)
       );
@@ -166,123 +166,211 @@ function MainAppContent() {
 
   const canProceed = selectedId && arrivalDate;
 
-  // ── STEP 1 ─────────────────────────────────────────────────────────
+  // ── STEP 1: Luxury Hero ──────────────────────────────────────────────
   const renderStep1 = () => (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="text-center py-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-xs font-black uppercase tracking-widest mb-4">
-          <Sparkles size={12} /> Korea Travel Guide 2026
-        </div>
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-3">
-          Your Personalized<br />Korea Arrival Guide
-        </h1>
-        <p className="text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
-          Tell us how you arrive — we'll build a step-by-step guide tailored exactly to you.
-        </p>
-      </div>
+    <div className="relative overflow-hidden">
+      {/* ── Dark premium background ── */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-[#0c1a3a] to-slate-900" />
 
-      <div className="bg-white rounded-[2rem] shadow-xl border border-slate-100 p-6 md:p-8">
-        <h2 className="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
-          <MapPin size={18} className="text-blue-600" /> Select Your Arrival Airport
-        </h2>
+      {/* Ambient glow effects */}
+      <div className="absolute top-[-15%] left-[10%] w-[560px] h-[560px] bg-blue-700 rounded-full blur-[220px] opacity-[0.18] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[5%] w-[420px] h-[420px] bg-indigo-600 rounded-full blur-[180px] opacity-[0.14] pointer-events-none" />
+      <div className="absolute top-[40%] left-[-5%] w-[300px] h-[300px] bg-blue-500 rounded-full blur-[160px] opacity-[0.08] pointer-events-none" />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-          {AIRPORTS.map(ap => {
-            const sel = selectedId === ap.id;
-            return (
-              <button key={ap.id} type="button" onClick={() => setSelectedId(ap.id)}
-                className={`relative text-left p-4 rounded-2xl border-2 transition-all duration-200
-                  ${sel ? 'border-blue-600 bg-blue-50 shadow-md shadow-blue-100' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-white hover:shadow-md'}`}>
-                {sel && (
-                  <div className="absolute top-2.5 right-2.5 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                    <Check size={10} strokeWidth={3} className="text-white" />
-                  </div>
-                )}
-                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full tracking-widest mb-1.5 inline-block
-                  ${sel ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                  {ap.code}{ap.terminal ? ` ${ap.terminal}` : ''}
-                </span>
-                <p className={`text-sm font-black leading-tight ${sel ? 'text-blue-900' : 'text-slate-800'}`}>{ap.nameEn}</p>
-                <p className={`text-[10px] font-medium mt-0.5 ${sel ? 'text-blue-400' : 'text-slate-400'}`}>{ap.region}</p>
-                {ap.is24h
-                  ? <p className="text-[9px] font-black text-emerald-600 mt-1">● 24h Open</p>
-                  : <p className="text-[9px] font-black text-red-400 mt-1">✕ Closed {ap.curfew}</p>}
-              </button>
-            );
-          })}
-        </div>
+      <div className="relative z-10 max-w-2xl mx-auto px-4 pt-12 pb-20">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
-              <Calendar size={10} className="inline mr-1" /> Arrival Date
-            </label>
-            <div className="relative bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center cursor-pointer
-                            focus-within:ring-2 focus-within:ring-blue-500 transition-all"
-              onClick={() => dateRef.current?.showPicker()}>
-              <Calendar size={16} className="text-slate-400 mr-2.5 shrink-0" />
-              {dayInfo ? (
-                <span className={`text-sm font-bold ${dayInfo.isWeekend ? 'text-rose-600' : 'text-slate-900'}`}>
-                  {dayInfo.label}
-                </span>
-              ) : <span className="text-sm text-slate-400">Select date</span>}
-              <input ref={dateRef} type="date" value={arrivalDate}
-                onChange={e => setArrivalDate(e.target.value)} className="sr-only" />
-            </div>
+        {/* ── Hero headline ── */}
+        <div className="text-center mb-10">
+          {/* Top badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-400/20 text-blue-300 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] mb-7">
+            <Sparkles size={11} />
+            Korea OSO · 2026 Verified Guide
           </div>
 
-          <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
-              <Clock size={10} className="inline mr-1" /> Flight Landing Time
-            </label>
-            <div className="relative bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center focus-within:ring-2 focus-within:ring-blue-500 transition-all">
-              <Clock size={16} className="text-slate-400 mr-2.5 shrink-0" />
-              <input type="time" value={arrivalTime} onChange={e => setArrivalTime(e.target.value)}
-                className="bg-transparent outline-none font-bold text-slate-900 text-sm w-full cursor-pointer" />
-            </div>
+          <h1 className="text-4xl md:text-[3.25rem] font-black text-white tracking-tight leading-[1.08] mb-5">
+            Your Trusted Travel<br />
+            <span className="bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-200 bg-clip-text text-transparent">
+              Expert for Korea
+            </span>
+          </h1>
+
+          <p className="text-slate-400 text-base md:text-lg font-medium max-w-sm mx-auto leading-relaxed mb-7">
+            Tell us your arrival details — we generate a step-by-step,
+            fact-verified guide tailored precisely to your trip.
+          </p>
+
+          {/* Trust signals */}
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5">
+            <span className="flex items-center gap-1.5 text-emerald-400 text-sm font-semibold">
+              <ShieldCheck size={14} /> 100% Fact-Verified
+            </span>
+            <span className="hidden sm:block w-px h-4 bg-white/10" />
+            <span className="flex items-center gap-1.5 text-blue-400 text-sm font-semibold">
+              <Check size={14} /> No Commissions
+            </span>
+            <span className="hidden sm:block w-px h-4 bg-white/10" />
+            <span className="flex items-center gap-1.5 text-purple-400 text-sm font-semibold">
+              <Heart size={14} /> Always Free
+            </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Adults</label>
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
-              <button onClick={() => setAdults(Math.max(1, adults - 1))}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
-              <span className="flex-1 text-center font-black text-slate-900">{adults}</span>
-              <button onClick={() => setAdults(adults + 1)}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
+        {/* ── Stats strip ── */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          {[
+            { num: '50K+', label: 'Travelers Guided', icon: <Users size={15} className="text-blue-400" /> },
+            { num: '6', label: 'Korean Airports', icon: <Plane size={15} className="text-indigo-400" /> },
+            { num: '24', label: 'Verified Steps', icon: <ShieldCheck size={15} className="text-emerald-400" /> },
+          ].map(s => (
+            <div key={s.label} className="bg-white/[0.04] border border-white/[0.08] rounded-2xl py-4 px-3 text-center backdrop-blur-sm">
+              <div className="flex justify-center mb-1.5">{s.icon}</div>
+              <p className="text-[1.4rem] font-black text-white leading-none">{s.num}</p>
+              <p className="text-[11px] text-slate-500 font-semibold mt-1 leading-tight">{s.label}</p>
             </div>
-          </div>
-          <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Children</label>
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
-              <button onClick={() => setChildren(Math.max(0, children - 1))}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
-              <span className="flex-1 text-center font-black text-slate-900">{children}</span>
-              <button onClick={() => setChildren(children + 1)}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
-            </div>
-          </div>
-          <div>
-            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Stay (days)</label>
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
-              <button onClick={() => setStayDays(Math.max(1, stayDays - 1))}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">−</button>
-              <span className="flex-1 text-center font-black text-slate-900">{stayDays}</span>
-              <button onClick={() => setStayDays(stayDays + 1)}
-                className="px-3 py-3 text-slate-500 hover:bg-slate-100 font-bold text-lg leading-none">+</button>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <button
-          onClick={() => canProceed && setStep(2)}
-          disabled={!canProceed}
-          className={`w-full py-4 font-black text-base rounded-2xl transition-all duration-200 flex items-center justify-center gap-2
-            ${canProceed ? 'bg-slate-900 hover:bg-blue-600 text-white shadow-lg hover:-translate-y-0.5' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}>
-          {canProceed ? <>Build My Guide <ArrowRight size={18} /></> : 'Select an airport to continue'}
-        </button>
+        {/* ── Form card ── */}
+        <div className="bg-white/[0.06] backdrop-blur-2xl border border-white/[0.10] rounded-[2rem] p-6 md:p-8 shadow-[0_32px_80px_rgba(0,0,0,0.55)]">
+
+          <h2 className="text-base font-black text-white mb-5 flex items-center gap-2">
+            <MapPin size={17} className="text-blue-400" /> Select Your Arrival Airport
+          </h2>
+
+          {/* Airport selector */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-6">
+            {AIRPORTS.map(ap => {
+              const sel = selectedId === ap.id;
+              return (
+                <button
+                  key={ap.id}
+                  type="button"
+                  onClick={() => setSelectedId(ap.id)}
+                  className={`relative text-left p-3.5 rounded-xl border transition-all duration-200
+                    ${sel
+                      ? 'border-blue-500 bg-blue-500/[0.18] shadow-[0_0_24px_rgba(59,130,246,0.22)]'
+                      : 'border-white/[0.09] bg-white/[0.03] hover:border-white/[0.18] hover:bg-white/[0.07]'}`}
+                >
+                  {sel && (
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                      <Check size={8} strokeWidth={3} className="text-white" />
+                    </div>
+                  )}
+                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full tracking-widest mb-1.5 inline-block
+                    ${sel ? 'bg-blue-500 text-white' : 'bg-white/10 text-slate-400'}`}>
+                    {ap.code}{ap.terminal ? ` ${ap.terminal}` : ''}
+                  </span>
+                  <p className={`text-sm font-black leading-tight ${sel ? 'text-white' : 'text-slate-300'}`}>
+                    {ap.nameEn}
+                  </p>
+                  <p className={`text-[10px] font-medium mt-0.5 ${sel ? 'text-blue-300' : 'text-slate-500'}`}>
+                    {ap.region}
+                  </p>
+                  {ap.is24h
+                    ? <p className="text-[9px] font-black text-emerald-400 mt-1.5">● 24h Open</p>
+                    : <p className="text-[9px] font-black text-rose-400 mt-1.5">✕ Closed {ap.curfew}</p>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Date + Time */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+            <div>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                <Calendar size={10} className="inline mr-1" /> Arrival Date
+              </label>
+              <div
+                className="relative bg-white/[0.05] border border-white/[0.09] rounded-xl px-4 py-3 flex items-center cursor-pointer hover:bg-white/[0.09] focus-within:ring-2 focus-within:ring-blue-500 transition-all"
+                onClick={() => dateRef.current?.showPicker()}
+              >
+                <Calendar size={16} className="text-slate-400 mr-2.5 shrink-0" />
+                {dayInfo ? (
+                  <span className={`text-sm font-bold ${dayInfo.isWeekend ? 'text-rose-300' : 'text-white'}`}>
+                    {dayInfo.label}
+                  </span>
+                ) : <span className="text-sm text-slate-500">Select date</span>}
+                <input
+                  ref={dateRef}
+                  type="date"
+                  value={arrivalDate}
+                  onChange={e => setArrivalDate(e.target.value)}
+                  className="sr-only"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                <Clock size={10} className="inline mr-1" /> Landing Time
+              </label>
+              <div className="relative bg-white/[0.05] border border-white/[0.09] rounded-xl px-4 py-3 flex items-center hover:bg-white/[0.09] focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+                <Clock size={16} className="text-slate-400 mr-2.5 shrink-0" />
+                <input
+                  type="time"
+                  value={arrivalTime}
+                  onChange={e => setArrivalTime(e.target.value)}
+                  className="bg-transparent outline-none font-bold text-white text-sm w-full cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Pax + Stay row */}
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {([
+              { label: 'Adults', value: adults, setter: setAdults, min: 1 },
+              { label: 'Children', value: children, setter: setChildren, min: 0 },
+              { label: 'Stay (days)', value: stayDays, setter: setStayDays, min: 1 },
+            ] as const).map(({ label, value, setter, min }) => (
+              <div key={label}>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                  {label}
+                </label>
+                <div className="flex items-center bg-white/[0.05] border border-white/[0.09] rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setter(Math.max(min, value - 1))}
+                    className="px-3 py-3 text-slate-300 hover:bg-white/10 font-bold text-lg leading-none transition-colors"
+                  >−</button>
+                  <span className="flex-1 text-center font-black text-white">{value}</span>
+                  <button
+                    onClick={() => setter(value + 1)}
+                    className="px-3 py-3 text-slate-300 hover:bg-white/10 font-bold text-lg leading-none transition-colors"
+                  >+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <button
+            onClick={() => canProceed && setStep(2)}
+            disabled={!canProceed}
+            className={`w-full py-4 font-black text-base rounded-2xl transition-all duration-200 flex items-center justify-center gap-2
+              ${canProceed
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-[0_0_36px_rgba(59,130,246,0.38)] hover:-translate-y-0.5 hover:shadow-[0_0_48px_rgba(59,130,246,0.52)]'
+                : 'bg-white/[0.05] border border-white/[0.09] text-slate-500 cursor-not-allowed'}`}
+          >
+            {canProceed
+              ? <><span>Build My Personal Guide</span><ArrowRight size={18} /></>
+              : 'Select an airport to continue'}
+          </button>
+        </div>
+
+        {/* ── Bottom trust line ── */}
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 mt-7">
+          <p className="text-[11px] text-slate-500 font-medium">
+            Trusted by travelers from 80+ countries
+          </p>
+          <span className="hidden sm:block w-px h-3 bg-white/10" />
+          <p className="text-[11px] text-slate-500 font-medium">
+            Updated March 2026
+          </p>
+          <span className="hidden sm:block w-px h-3 bg-white/10" />
+          <p className="text-[11px] text-slate-500 font-medium">
+            No sign-up required
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -346,11 +434,11 @@ function MainAppContent() {
         <Section icon={<Globe size={20} className="text-indigo-500" />} title="Full Survival Guide" badge="New" badgeColor="purple">
           <div className="p-4 bg-slate-50 rounded-2xl text-center">
             <p className="text-sm font-bold text-slate-800 mb-4">Want the complete 24-step master guide for 2026?</p>
-            <button 
+            <button
               onClick={() => router.push(`/airport/${airport.code.toLowerCase()}`)}
               className="px-6 py-3 bg-blue-600 text-white font-black rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 mx-auto"
             >
-              Open Full Guide <ArrowRight size={16}/>
+              Open Full Guide <ArrowRight size={16} />
             </button>
           </div>
         </Section>
@@ -370,25 +458,26 @@ function MainAppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-6 h-14 flex items-center justify-between">
-          <button onClick={() => setStep(1)} className="flex items-center gap-2 font-black text-slate-900 text-base tracking-tight hover:text-blue-600 transition-colors">
-            <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Plane size={14} className="text-white fill-white" />
-            </div>
-            WTOKO Guide
-          </button>
-          {step === 2 && airport && (
+    <div className={`font-sans ${step === 2 ? 'min-h-screen bg-[#F8FAFC] text-slate-900' : ''}`}>
+      {/* Step 2 sub-header: airport context bar */}
+      {step === 2 && airport && (
+        <div className="bg-white border-b border-slate-100 shadow-sm">
+          <div className="container mx-auto px-6 h-11 flex items-center justify-between max-w-3xl">
+            <button
+              onClick={() => setStep(1)}
+              className="flex items-center gap-1.5 text-xs font-black text-slate-500 hover:text-blue-600 transition-colors"
+            >
+              ← Change Details
+            </button>
             <div className="flex items-center gap-2 text-xs font-black text-slate-400">
               <span className="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">{airport.code}</span>
               <span>{season}</span>
             </div>
-          )}
+          </div>
         </div>
-      </header>
+      )}
 
-      <main className="container mx-auto px-4 py-6 max-w-3xl">
+      <main className={step === 2 ? 'container mx-auto px-4 py-6 max-w-3xl' : ''}>
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
       </main>
@@ -398,7 +487,7 @@ function MainAppContent() {
 
 export default function App() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-950 text-white text-sm font-bold">Loading…</div>}>
       <MainAppContent />
     </Suspense>
   );
