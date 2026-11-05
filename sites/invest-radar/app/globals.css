@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b1220;
+  --color-panel: #ffffff;
+  --color-line: #e5e7eb;
+  --color-muted: #6b7280;
+  --color-brand: #1d4ed8;
+  /* 한국 시장 관례: 상승 = 빨강, 하락 = 파랑 */
+  --color-up: #dc2626;
+  --color-down: #2563eb;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+:root { color-scheme: light; }
+body { background: #f5f7fb; color: var(--color-ink); }
+
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: dark; }
+  body { background: #0a0f1a; color: #e5e7eb; }
+}
+
+.card { @apply rounded-2xl border border-line bg-panel p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.03]; }
+.chip { @apply inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1 text-xs dark:border-white/10; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
